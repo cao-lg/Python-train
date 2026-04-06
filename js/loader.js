@@ -392,10 +392,10 @@ async function initializeLoader() {
     
     // 根据当前页面初始化
     console.log('当前页面路径:', window.location.pathname);
-    if (window.location.pathname.includes('problems.html')) {
+    if (window.location.pathname.includes('problems')) {
         console.log('初始化题目列表');
         await initProblemsList();
-    } else if (window.location.pathname.includes('detail.html')) {
+    } else if (window.location.pathname.includes('detail')) {
         console.log('初始化题目详情');
         await initProblemDetail();
     } else {
