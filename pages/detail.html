@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>题目详情 - Python 基础课程实训 OJ 系统</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.13/lib/codemirror.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.13/theme/dracula.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.13/theme/monokai.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.13/theme/eclipse.css">
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -53,10 +57,7 @@
                 <div class="code-editor">
                     <h3>代码编辑器</h3>
                     <div class="editor-wrapper">
-                        <div class="line-numbers" id="line-numbers">1</div>
-                        <div class="editor-container">
-                            <textarea id="code-input" placeholder="请输入 Python 代码..." spellcheck="false"></textarea>
-                        </div>
+                        <div id="code-editor-container"></div>
                     </div>
                     <div class="editor-actions">
                         <button id="run-btn">▶️ 运行</button>
@@ -83,6 +84,8 @@
             <p>&copy; 2026 Python 基础课程实训 OJ 系统</p>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.13/lib/codemirror.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.13/mode/python/python.js"></script>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script src="../js/db.js"></script>
     <script src="../js/core.js"></script>

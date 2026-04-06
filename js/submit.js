@@ -1,6 +1,7 @@
 // 代码提交功能
 
 let currentProblemId = null;
+let editor = null;
 
 // 初始化提交功能
 function initSubmit() {
@@ -10,7 +11,6 @@ function initSubmit() {
     const runBtn = document.getElementById('run-btn');
     const copyBtn = document.getElementById('copy-btn');
     const resetBtn = document.getElementById('reset-btn');
-    const codeInput = document.getElementById('code-input');
     const resultDisplay = document.getElementById('result-display');
     const consoleText = document.getElementById('console-text');
     
@@ -19,7 +19,6 @@ function initSubmit() {
         runBtn,
         copyBtn,
         resetBtn,
-        codeInput,
         resultDisplay,
         consoleText
     });
@@ -30,23 +29,53 @@ function initSubmit() {
     
     console.log('当前题目ID:', currentProblemId);
     
+    // 初始化 CodeMirror 编辑器
+    const container = document.getElementById('code-editor-container');
+    if (container) {
+        editor = CodeMirror(container, {
+            mode: 'python',
+            theme: 'default',
+            lineNumbers: true,
+            indentUnit: 4,
+            tabSize: 4,
+            indentWithTabs: false,
+            lineWrapping: true,
+            autofocus: true,
+            placeholder: '请输入 Python 代码...'
+        });
+        
+        // 设置编辑器高度
+        editor.setSize('100%', '400px');
+        
+        // 根据主题切换编辑器主题
+        const updateEditorTheme = () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            editor.setOption('theme', isDark ? 'dracula' : 'default');
+        };
+        
+        // 监听主题变化
+        const observer = new MutationObserver(updateEditorTheme);
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-theme']
+        });
+        
+        // 初始化主题
+        updateEditorTheme();
+        
+        console.log('CodeMirror 编辑器初始化完成');
+        
+        // 编辑器内容变化时自动保存
+        editor.on('change', function() {
+            if (currentProblemId) {
+                saveDraft(currentProblemId, editor.getValue());
+            }
+        });
+    }
+    
     // 加载草稿
     if (currentProblemId) {
         loadDraft(currentProblemId);
-    }
-    
-    if (codeInput) {
-        // 更新行号
-        updateLineNumbers();
-        codeInput.addEventListener('input', function() {
-            updateLineNumbers();
-            // 自动保存草稿
-            if (currentProblemId) {
-                saveDraft(currentProblemId, this.value);
-            }
-        });
-        codeInput.addEventListener('scroll', syncScroll);
-        codeInput.addEventListener('keydown', handleKeyDown);
     }
     
     if (runBtn) {
@@ -80,66 +109,6 @@ function initSubmit() {
     console.log('initSubmit执行完成');
 }
 
-// 更新行号
-function updateLineNumbers() {
-    const codeInput = document.getElementById('code-input');
-    const lineNumbers = document.getElementById('line-numbers');
-    
-    if (!codeInput || !lineNumbers) return;
-    
-    const lines = codeInput.value.split('\n');
-    let lineNumbersHtml = '';
-    
-    for (let i = 1; i <= lines.length; i++) {
-        lineNumbersHtml += i + '\n';
-    }
-    
-    lineNumbers.textContent = lineNumbersHtml.trim();
-}
-
-// 同步滚动
-function syncScroll() {
-    const codeInput = document.getElementById('code-input');
-    const lineNumbers = document.getElementById('line-numbers');
-    
-    if (!codeInput || !lineNumbers) return;
-    
-    lineNumbers.scrollTop = codeInput.scrollTop;
-}
-
-// 处理键盘事件（自动缩进）
-function handleKeyDown(e) {
-    const codeInput = document.getElementById('code-input');
-    
-    if (!codeInput) return;
-    
-    if (e.key === 'Tab') {
-        e.preventDefault();
-        const start = codeInput.selectionStart;
-        const end = codeInput.selectionEnd;
-        
-        // 插入4个空格
-        codeInput.value = codeInput.value.substring(0, start) + '    ' + codeInput.value.substring(end);
-        codeInput.selectionStart = codeInput.selectionEnd = start + 4;
-        
-        // 更新行号
-        updateLineNumbers();
-    } else if (e.key === 'Enter') {
-        e.preventDefault();
-        const start = codeInput.selectionStart;
-        const value = codeInput.value;
-        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-        const line = value.substring(lineStart, start);
-        const indent = line.match(/^(\s*)/)[1];
-        
-        codeInput.value = value.substring(0, start) + '\n' + indent + value.substring(start);
-        codeInput.selectionStart = codeInput.selectionEnd = start + 1 + indent.length;
-        
-        // 更新行号
-        updateLineNumbers();
-    }
-}
-
 // 保存草稿
 function saveDraft(problemId, code) {
     try {
@@ -160,12 +129,8 @@ function loadDraft(problemId) {
         const drafts = JSON.parse(localStorage.getItem('code_drafts') || '{}');
         const draft = drafts[problemId];
         
-        if (draft && draft.code) {
-            const codeInput = document.getElementById('code-input');
-            if (codeInput) {
-                codeInput.value = draft.code;
-                updateLineNumbers();
-            }
+        if (draft && draft.code && editor) {
+            editor.setValue(draft.code);
         }
     } catch (error) {
         console.error('加载草稿失败:', error);
@@ -176,17 +141,16 @@ function loadDraft(problemId) {
 async function handleRun() {
     console.log('handleRun 函数开始执行');
     
-    const codeInput = document.getElementById('code-input');
     const consoleText = document.getElementById('console-text');
     
-    console.log('元素获取:', { codeInput, consoleText });
+    console.log('元素获取:', { consoleText, editor });
     
-    if (!codeInput || !consoleText) {
-        console.error('缺少必要的DOM元素');
+    if (!consoleText || !editor) {
+        console.error('缺少必要的DOM元素或编辑器');
         return;
     }
     
-    const code = codeInput.value.trim();
+    const code = editor.getValue().trim();
     console.log('获取到的代码:', code);
     
     if (!code) {
@@ -213,7 +177,7 @@ async function handleRun() {
         // 获取题目以获取样例输入
         let sampleInput = '';
         if (currentProblemId) {
-            const problem = await db.problemDB.findById(currentProblemId);
+            const problem = await window.db.problemDB.findById(currentProblemId);
             if (problem) {
                 sampleInput = problem.sample_input;
             }
@@ -243,14 +207,13 @@ async function handleRun() {
 
 // 处理代码提交
 async function handleSubmit() {
-    const codeInput = document.getElementById('code-input');
     const resultDisplay = document.getElementById('result-display');
     const submitBtn = document.getElementById('submit-btn');
     
-    if (!codeInput || !resultDisplay || !submitBtn) return;
+    if (!resultDisplay || !submitBtn || !editor) return;
     
     // 获取代码和题目 ID
-    const code = codeInput.value.trim();
+    const code = editor.getValue().trim();
     
     if (!code) {
         resultDisplay.innerHTML = '<div class="error">请输入代码</div>';
@@ -286,7 +249,7 @@ async function handleSubmit() {
         displayResult(judgeResult, resultDisplay);
         
         // 存储提交记录
-        await db.submissionDB.create(currentUser.id, currentProblemId, code, judgeResult.result);
+        await window.db.submissionDB.create(currentUser.id, currentProblemId, code, judgeResult.result);
         
     } catch (error) {
         console.error('提交失败:', error);
@@ -350,25 +313,24 @@ function displayResult(result, container) {
 
 // 处理复制代码
 function handleCopy() {
-    const codeInput = document.getElementById('code-input');
+    if (!editor) return;
     
-    if (!codeInput) return;
-    
-    codeInput.select();
-    document.execCommand('copy');
-    
-    showMessage('代码已复制到剪贴板');
+    const code = editor.getValue();
+    navigator.clipboard.writeText(code).then(() => {
+        showMessage('代码已复制到剪贴板');
+    }).catch(err => {
+        console.error('复制失败:', err);
+        showMessage('复制失败');
+    });
 }
 
 // 处理重置代码
 function handleReset() {
-    const codeInput = document.getElementById('code-input');
     const resultDisplay = document.getElementById('result-display');
     const consoleText = document.getElementById('console-text');
     
-    if (codeInput) {
-        codeInput.value = '';
-        updateLineNumbers();
+    if (editor) {
+        editor.setValue('');
     }
     
     if (resultDisplay) {
