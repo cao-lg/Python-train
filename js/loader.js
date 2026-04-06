@@ -380,6 +380,7 @@ async function initializeLoader() {
 }
 
 // 立即执行初始化
+console.log('开始执行loader初始化');
 initializeLoader();
 
 // 暴露加载器函数
