@@ -28,7 +28,7 @@ async function loadCategory(category) {
         
         // 存储到数据库
         for (const problem of problems) {
-            await db.problemDB.create({
+            await window.db.problemDB.create({
                 id: problem.id,
                 title: problem.title,
                 description: problem.description,
