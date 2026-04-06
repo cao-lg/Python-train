@@ -72,6 +72,9 @@ async function initProblemsList() {
     // 如果指定了分类，加载该分类
     if (category !== 'all' && !loadedCategories.has(category)) {
         await loadCategory(category);
+    } else if (category === 'all' && loadedCategories.size === 0) {
+        // 如果是全部分类且没有加载过任何分类，加载所有分类
+        await loadAllCategories();
     }
     
     // 加载题目列表
