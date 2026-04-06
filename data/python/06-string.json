@@ -1,0 +1,192 @@
+[
+  {
+    "id": 31,
+    "title": "字符串长度",
+    "description": "输入一个字符串，输出该字符串的长度。",
+    "input": "一个字符串",
+    "output": "字符串的长度",
+    "sample_input": "Hello World",
+    "sample_output": "11",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "Hello World", "output": "11"},
+      {"input": "", "output": "0"},
+      {"input": "Python", "output": "6"}
+    ],
+    "hidden_test_cases": [
+      {"input": "abcdefghijklmnopqrstuvwxyz", "output": "26"},
+      {"input": "1234567890", "output": "10"}
+    ]
+  },
+  {
+    "id": 32,
+    "title": "字符串反转",
+    "description": "输入一个字符串，将其反转后输出。",
+    "input": "一个字符串",
+    "output": "反转后的字符串",
+    "sample_input": "Python",
+    "sample_output": "nohtyP",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "Python", "output": "nohtyP"},
+      {"input": "Hello", "output": "olleH"},
+      {"input": "a", "output": "a"}
+    ],
+    "hidden_test_cases": [
+      {"input": "abc123", "output": "321cba"},
+      {"input": "Racecar", "output": "racecaR"}
+    ]
+  },
+  {
+    "id": 33,
+    "title": "统计字符个数",
+    "description": "输入一个字符串和一个字符，统计该字符串中该字符出现的次数。",
+    "input": "第一行是字符串，第二行是要查找的字符",
+    "output": "字符出现的次数",
+    "sample_input": "Hello World\nl",
+    "sample_output": "3",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "Hello World\nl", "output": "3"},
+      {"input": "aaaaa\na", "output": "5"},
+      {"input": "Python\ny", "output": "0"}
+    ],
+    "hidden_test_cases": [
+      {"input": "123123123\n2", "output": "3"},
+      {"input": "Hello Hello\nH", "output": "2"}
+    ]
+  },
+  {
+    "id": 34,
+    "title": "大小写转换",
+    "description": "输入一个字符串，将其中的大写字母转换为小写，小写字母转换为大写，其他字符不变，然后输出。",
+    "input": "一个字符串",
+    "output": "转换后的字符串",
+    "sample_input": "Hello World!",
+    "sample_output": "hELLO wORLD!",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "Hello World!", "output": "hELLO wORLD!"},
+      {"input": "PYTHON", "output": "python"},
+      {"input": "123!@#", "output": "123!@#"}
+    ],
+    "hidden_test_cases": [
+      {"input": "aBcDeF", "output": "AbCdEf"},
+      {"input": "Test123", "output": "tEST123"}
+    ]
+  },
+  {
+    "id": 35,
+    "title": "判断回文",
+    "description": "输入一个字符串，判断它是否是回文。回文是指正读反读都一样的字符串。如果是回文输出'是回文'，否则输出'不是回文'。",
+    "input": "一个字符串",
+    "output": "是回文/不是回文",
+    "sample_input": "racecar",
+    "sample_output": "是回文",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "racecar", "output": "是回文"},
+      {"input": "hello", "output": "不是回文"},
+      {"input": "a", "output": "是回文"}
+    ],
+    "hidden_test_cases": [
+      {"input": "12321", "output": "是回文"},
+      {"input": "abba", "output": "是回文"}
+    ]
+  },
+  {
+    "id": 36,
+    "title": "字符串切片",
+    "description": "输入一个字符串和两个整数a、b，输出字符串从索引a开始到索引b（不包含b）的子串。索引从0开始。",
+    "input": "第一行是字符串，第二行是两个整数a和b，用空格隔开",
+    "output": "子串",
+    "sample_input": "Hello World\n2 7",
+    "sample_output": "llo W",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "Hello World\n2 7", "output": "llo W"},
+      {"input": "Python\n0 6", "output": "Python"},
+      {"input": "abcde\n1 4", "output": "bcd"}
+    ],
+    "hidden_test_cases": [
+      {"input": "abcdefghij\n3 8", "output": "defgh"},
+      {"input": "Hello\n1 3", "output": "el"}
+    ]
+  },
+  {
+    "id": 37,
+    "title": "替换字符串",
+    "description": "输入一个字符串和两个子串s1、s2，将原字符串中所有的s1替换为s2，然后输出。",
+    "input": "第一行是原字符串，第二行是s1，第三行是s2",
+    "output": "替换后的字符串",
+    "sample_input": "Hello World\nHello\nHi",
+    "sample_output": "Hi World",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "Hello World\nHello\nHi", "output": "Hi World"},
+      {"input": "aaaaa\na\nb", "output": "bbbbb"},
+      {"input": "Python\nJava\nC++", "output": "Python"}
+    ],
+    "hidden_test_cases": [
+      {"input": "ababab\nab\ncd", "output": "cdcdcd"},
+      {"input": "test test test\ntest\npass", "output": "pass pass pass"}
+    ]
+  },
+  {
+    "id": 38,
+    "title": "统计单词个数",
+    "description": "输入一个英文句子，统计其中的单词个数。单词之间用空格分隔。",
+    "input": "一个英文句子",
+    "output": "单词个数",
+    "sample_input": "Hello World Python",
+    "sample_output": "3",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "Hello World Python", "output": "3"},
+      {"input": "Hello", "output": "1"},
+      {"input": "", "output": "0"}
+    ],
+    "hidden_test_cases": [
+      {"input": "This is a test sentence", "output": "5"},
+      {"input": "One two three four five", "output": "5"}
+    ]
+  },
+  {
+    "id": 39,
+    "title": "字符串拼接",
+    "description": "输入两个字符串，将它们拼接在一起输出。",
+    "input": "两行，每行一个字符串",
+    "output": "拼接后的字符串",
+    "sample_input": "Hello\nWorld",
+    "sample_output": "HelloWorld",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "Hello\nWorld", "output": "HelloWorld"},
+      {"input": "Python\n3", "output": "Python3"},
+      {"input": "a\nb", "output": "ab"}
+    ],
+    "hidden_test_cases": [
+      {"input": "Good\nMorning", "output": "GoodMorning"},
+      {"input": "123\n456", "output": "123456"}
+    ]
+  },
+  {
+    "id": 40,
+    "title": "字符串比较",
+    "description": "输入两个字符串，比较它们的字典序大小。如果第一个字符串小于第二个，输出'第一个小'；如果大于，输出'第一个大'；如果相等，输出'相等'。",
+    "input": "两行，每行一个字符串",
+    "output": "比较结果",
+    "sample_input": "apple\nbanana",
+    "sample_output": "第一个小",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "apple\nbanana", "output": "第一个小"},
+      {"input": "zoo\napple", "output": "第一个大"},
+      {"input": "hello\nhello", "output": "相等"}
+    ],
+    "hidden_test_cases": [
+      {"input": "a\nA", "output": "第一个大"},
+      {"input": "abc\nabcd", "output": "第一个小"}
+    ]
+  }
+]

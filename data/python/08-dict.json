@@ -1,0 +1,90 @@
+[
+  {
+    "id": 51,
+    "title": "创建字典并输出",
+    "description": "输入n个键值对，创建一个字典并输出。每个键值对由两个字符串组成，用空格隔开。",
+    "input": "第一行是整数n，表示键值对的个数；后面n行，每行两个字符串，用空格隔开，分别是键和值",
+    "output": "字典",
+    "sample_input": "3\nname Alice\nage 20\ncity Beijing",
+    "sample_output": "{'name': 'Alice', 'age': '20', 'city': 'Beijing'}",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "3\nname Alice\nage 20\ncity Beijing", "output": "{'name': 'Alice', 'age': '20', 'city': 'Beijing'}"},
+      {"input": "1\na 1", "output": "{'a': '1'}"},
+      {"input": "0\n", "output": "{}"}
+    ],
+    "hidden_test_cases": [
+      {"input": "2\nkey1 value1\nkey2 value2", "output": "{'key1': 'value1', 'key2': 'value2'}"}
+    ]
+  },
+  {
+    "id": 52,
+    "title": "查询字典中的值",
+    "description": "先创建一个字典，然后输入一个键，输出对应的值。如果键不存在，输出'键不存在'。",
+    "input": "第一行是整数n，表示键值对的个数；后面n行，每行两个字符串，用空格隔开，分别是键和值；最后一行是要查询的键",
+    "output": "对应的值或'键不存在'",
+    "sample_input": "3\nname Alice\nage 20\ncity Beijing\nname",
+    "sample_output": "Alice",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "3\nname Alice\nage 20\ncity Beijing\nname", "output": "Alice"},
+      {"input": "3\nname Alice\nage 20\ncity Beijing\nphone", "output": "键不存在"}
+    ],
+    "hidden_test_cases": [
+      {"input": "2\na 1\nb 2\nb", "output": "2"}
+    ]
+  },
+  {
+    "id": 53,
+    "title": "统计字符出现次数",
+    "description": "输入一个字符串，统计每个字符出现的次数，用字典表示并输出。",
+    "input": "一个字符串",
+    "output": "字符统计字典",
+    "sample_input": "hello",
+    "sample_output": "{'h': 1, 'e': 1, 'l': 2, 'o': 1}",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "hello", "output": "{'h': 1, 'e': 1, 'l': 2, 'o': 1}"},
+      {"input": "aaa", "output": "{'a': 3}"},
+      {"input": "", "output": "{}"}
+    ],
+    "hidden_test_cases": [
+      {"input": "abracadabra", "output": "{'a': 5, 'b': 2, 'r': 2, 'c': 1, 'd': 1}"}
+    ]
+  },
+  {
+    "id": 54,
+    "title": "字典合并",
+    "description": "输入两个字典，将它们合并成一个字典并输出。如果有相同的键，第二个字典的值覆盖第一个字典的值。",
+    "input": "第一行是整数n，表示第一个字典的键值对个数；后面n行，每行两个字符串，用空格隔开，分别是键和值；然后是整数m，表示第二个字典的键值对个数；后面m行，每行两个字符串，用空格隔开，分别是键和值",
+    "output": "合并后的字典",
+    "sample_input": "2\na 1\nb 2\n2\nb 3\nc 4",
+    "sample_output": "{'a': '1', 'b': '3', 'c': '4'}",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "2\na 1\nb 2\n2\nb 3\nc 4", "output": "{'a': '1', 'b': '3', 'c': '4'}"},
+      {"input": "0\n\n1\na 1", "output": "{'a': '1'}"}
+    ],
+    "hidden_test_cases": [
+      {"input": "1\nkey value\n1\nkey newvalue", "output": "{'key': 'newvalue'}"}
+    ]
+  },
+  {
+    "id": 55,
+    "title": "找出字典中的最大值",
+    "description": "输入一个字典，其中值都是整数，找出值最大的键并输出。如果有多个键的值相同且都是最大值，输出第一个遇到的键。",
+    "input": "第一行是整数n，表示键值对的个数；后面n行，每行一个键和一个整数，用空格隔开",
+    "output": "值最大的键",
+    "sample_input": "3\na 10\nb 20\nc 15",
+    "sample_output": "b",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "3\na 10\nb 20\nc 15", "output": "b"},
+      {"input": "2\nx -5\ny -10", "output": "x"},
+      {"input": "1\nonly 100", "output": "only"}
+    ],
+    "hidden_test_cases": [
+      {"input": "4\napple 5\nbanana 10\ncherry 10\ndate 8", "output": "banana"}
+    ]
+  }
+]

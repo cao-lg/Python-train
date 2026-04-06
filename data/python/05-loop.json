@@ -1,0 +1,181 @@
+[
+  {
+    "id": 21,
+    "title": "累加1到n",
+    "description": "输入一个正整数n，计算1到n的和并输出。",
+    "input": "一个正整数n",
+    "output": "1到n的和",
+    "sample_input": "5",
+    "sample_output": "15",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "5", "output": "15"},
+      {"input": "10", "output": "55"},
+      {"input": "1", "output": "1"}
+    ],
+    "hidden_test_cases": [
+      {"input": "100", "output": "5050"},
+      {"input": "50", "output": "1275"}
+    ]
+  },
+  {
+    "id": 22,
+    "title": "计算阶乘",
+    "description": "输入一个正整数n，计算n的阶乘（n!）并输出。",
+    "input": "一个正整数n",
+    "output": "n的阶乘",
+    "sample_input": "5",
+    "sample_output": "120",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "5", "output": "120"},
+      {"input": "0", "output": "1"},
+      {"input": "1", "output": "1"}
+    ],
+    "hidden_test_cases": [
+      {"input": "10", "output": "3628800"},
+      {"input": "7", "output": "5040"}
+    ]
+  },
+  {
+    "id": 23,
+    "title": "输出乘法表",
+    "description": "输入一个正整数n，输出n的乘法表，格式为'n * i = 结果'，每行一个等式，i从1到9。",
+    "input": "一个正整数n",
+    "output": "n的乘法表",
+    "sample_input": "3",
+    "sample_output": "3 * 1 = 3\n3 * 2 = 6\n3 * 3 = 9\n3 * 4 = 12\n3 * 5 = 15\n3 * 6 = 18\n3 * 7 = 21\n3 * 8 = 24\n3 * 9 = 27",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "3", "output": "3 * 1 = 3\n3 * 2 = 6\n3 * 3 = 9\n3 * 4 = 12\n3 * 5 = 15\n3 * 6 = 18\n3 * 7 = 21\n3 * 8 = 24\n3 * 9 = 27"}
+    ],
+    "hidden_test_cases": [
+      {"input": "5", "output": "5 * 1 = 5\n5 * 2 = 10\n5 * 3 = 15\n5 * 4 = 20\n5 * 5 = 25\n5 * 6 = 30\n5 * 7 = 35\n5 * 8 = 40\n5 * 9 = 45"}
+    ]
+  },
+  {
+    "id": 24,
+    "title": "求平均值",
+    "description": "先输入一个正整数n，表示有n个数；然后输入n个整数，求这n个数的平均值并输出（保留两位小数）。",
+    "input": "第一行是一个正整数n，后面n行每行一个整数",
+    "output": "平均值，保留两位小数",
+    "sample_input": "3\n10\n20\n30",
+    "sample_output": "20.00",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "3\n10\n20\n30", "output": "20.00"},
+      {"input": "5\n1\n2\n3\n4\n5", "output": "3.00"}
+    ],
+    "hidden_test_cases": [
+      {"input": "4\n5\n7\n9\n11", "output": "8.00"}
+    ]
+  },
+  {
+    "id": 25,
+    "title": "斐波那契数列",
+    "description": "输入一个正整数n，输出斐波那契数列的前n项。斐波那契数列定义为：第1项是0，第2项是1，从第3项开始，每一项是前两项之和。",
+    "input": "一个正整数n",
+    "output": "用空格隔开的斐波那契数列前n项",
+    "sample_input": "5",
+    "sample_output": "0 1 1 2 3",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "5", "output": "0 1 1 2 3"},
+      {"input": "1", "output": "0"},
+      {"input": "2", "output": "0 1"}
+    ],
+    "hidden_test_cases": [
+      {"input": "10", "output": "0 1 1 2 3 5 8 13 21 34"}
+    ]
+  },
+  {
+    "id": 26,
+    "title": "判断素数",
+    "description": "输入一个大于1的正整数，判断它是否为素数。如果是素数输出'是素数'，否则输出'不是素数'。",
+    "input": "一个大于1的正整数",
+    "output": "是素数/不是素数",
+    "sample_input": "17",
+    "sample_output": "是素数",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "17", "output": "是素数"},
+      {"input": "4", "output": "不是素数"},
+      {"input": "2", "output": "是素数"}
+    ],
+    "hidden_test_cases": [
+      {"input": "97", "output": "是素数"},
+      {"input": "100", "output": "不是素数"}
+    ]
+  },
+  {
+    "id": 27,
+    "title": "求最大公约数",
+    "description": "输入两个正整数a和b，求它们的最大公约数（GCD）并输出。",
+    "input": "两个正整数，用空格隔开",
+    "output": "最大公约数",
+    "sample_input": "12 18",
+    "sample_output": "6",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "12 18", "output": "6"},
+      {"input": "7 13", "output": "1"},
+      {"input": "100 50", "output": "50"}
+    ],
+    "hidden_test_cases": [
+      {"input": "48 36", "output": "12"},
+      {"input": "21 28", "output": "7"}
+    ]
+  },
+  {
+    "id": 28,
+    "title": "数字反转",
+    "description": "输入一个正整数，将其各位数字反转后输出。",
+    "input": "一个正整数",
+    "output": "反转后的数字",
+    "sample_input": "12345",
+    "sample_output": "54321",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "12345", "output": "54321"},
+      {"input": "100", "output": "1"},
+      {"input": "7", "output": "7"}
+    ],
+    "hidden_test_cases": [
+      {"input": "987654", "output": "456789"},
+      {"input": "1200", "output": "21"}
+    ]
+  },
+  {
+    "id": 29,
+    "title": "统计数字出现次数",
+    "description": "输入一个正整数n和一个数字d，统计n中d出现的次数并输出。",
+    "input": "两个整数，用空格隔开：第一个是n，第二个是d（d是0-9之间的数字）",
+    "output": "数字出现次数",
+    "sample_input": "123123 1",
+    "sample_output": "2",
+    "difficulty": "medium",
+    "test_cases": [
+      {"input": "123123 1", "output": "2"},
+      {"input": "1000 0", "output": "3"},
+      {"input": "5555 5", "output": "4"}
+    ],
+    "hidden_test_cases": [
+      {"input": "123456789 5", "output": "1"},
+      {"input": "88888 8", "output": "5"}
+    ]
+  },
+  {
+    "id": 30,
+    "title": "百元百鸡",
+    "description": "百元买百鸡问题：公鸡每只5元，母鸡每只3元，小鸡3只1元，用100元买100只鸡，问公鸡、母鸡、小鸡各有多少只？输出所有可能的解，每个解一行，格式为'公鸡x只，母鸡y只，小鸡z只'，按x从小到大排列。",
+    "input": "无",
+    "output": "所有可能的解，每个解一行",
+    "sample_input": "",
+    "sample_output": "公鸡0只，母鸡25只，小鸡75只\n公鸡4只，母鸡18只，小鸡78只\n公鸡8只，母鸡11只，小鸡81只\n公鸡12只，母鸡4只，小鸡84只",
+    "difficulty": "hard",
+    "test_cases": [
+      {"input": "", "output": "公鸡0只，母鸡25只，小鸡75只\n公鸡4只，母鸡18只，小鸡78只\n公鸡8只，母鸡11只，小鸡81只\n公鸡12只，母鸡4只，小鸡84只"}
+    ],
+    "hidden_test_cases": []
+  }
+]

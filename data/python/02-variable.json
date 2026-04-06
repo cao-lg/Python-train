@@ -1,0 +1,62 @@
+[
+  {
+    "id": 6,
+    "title": "定义变量存储姓名并输出",
+    "description": "定义一个变量 name 存储你的姓名，然后输出：我的名字是 name",
+    "input": "",
+    "output": "我的名字是张三",
+    "sample_input": "",
+    "sample_output": "我的名字是张三",
+    "difficulty": "easy",
+    "test_cases": [{"input": "", "output": "我的名字是张三"}],
+    "hidden_test_cases": []
+  },
+  {
+    "id": 7,
+    "title": "整数、浮点数运算",
+    "description": "计算 10 + 3.5 并输出结果",
+    "input": "",
+    "output": "13.5",
+    "sample_input": "",
+    "sample_output": "13.5",
+    "difficulty": "easy",
+    "test_cases": [{"input": "", "output": "13.5"}],
+    "hidden_test_cases": []
+  },
+  {
+    "id": 8,
+    "title": "类型转换 int/float/str",
+    "description": "将字符串 '100' 转换为整数并输出，然后输出类型",
+    "input": "",
+    "output": "100\n<class 'int'>",
+    "sample_input": "",
+    "sample_output": "100\n<class 'int'>",
+    "difficulty": "easy",
+    "test_cases": [{"input": "", "output": "100\n<class 'int'>"}],
+    "hidden_test_cases": []
+  },
+  {
+    "id": 9,
+    "title": "计算圆的周长",
+    "description": "圆的半径是 5，计算并输出圆的周长（π取3.14，周长=2*π*r",
+    "input": "",
+    "output": "31.4",
+    "sample_input": "",
+    "sample_output": "31.4",
+    "difficulty": "easy",
+    "test_cases": [{"input": "", "output": "31.4"}],
+    "hidden_test_cases": []
+  },
+  {
+    "id": 10,
+    "title": "交换两个变量的值",
+    "description": "a = 10, b = 20，交换它们的值后输出 a=20, b=10",
+    "input": "",
+    "output": "a=20, b=10",
+    "sample_input": "",
+    "sample_output": "a=20, b=10",
+    "difficulty": "easy",
+    "test_cases": [{"input": "", "output": "a=20, b=10"}],
+    "hidden_test_cases": []
+  }
+]

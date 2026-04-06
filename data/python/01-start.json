@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "title": "输出 Hello World",
+    "description": "编写一个 Python 程序，输出 Hello World",
+    "input": "",
+    "output": "Hello World",
+    "sample_input": "",
+    "sample_output": "Hello World",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "", "output": "Hello World"}
+    ],
+    "hidden_test_cases": []
+  },
+  {
+    "id": 2,
+    "title": "输出姓名和年龄",
+    "description": "定义姓名为 '张三'，年龄为 18，输出：我是张三，今年18岁",
+    "input": "",
+    "output": "我是张三，今年18岁",
+    "sample_input": "",
+    "sample_output": "我是张三，今年18岁",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "", "output": "我是张三，今年18岁"}
+    ],
+    "hidden_test_cases": []
+  },
+  {
+    "id": 3,
+    "title": "输出多行文本",
+    "description": "输出三行文本：第一行是 'Python 入门', 第二行是 '真有趣', 第三行是 '加油！'",
+    "input": "",
+    "output": "Python 入门\n真有趣\n加油！",
+    "sample_input": "",
+    "sample_output": "Python 入门\n真有趣\n加油！",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "", "output": "Python 入门\n真有趣\n加油！"}
+    ],
+    "hidden_test_cases": []
+  },
+  {
+    "id": 4,
+    "title": "简单数学计算 1+1",
+    "description": "计算 1 + 1 的结果并输出",
+    "input": "",
+    "output": "2",
+    "sample_input": "",
+    "sample_output": "2",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "", "output": "2"}
+    ],
+    "hidden_test_cases": []
+  },
+  {
+    "id": 5,
+    "title": "注释的使用",
+    "description": "在代码中添加单行注释 # 这是单行注释，输出 '学习注释'",
+    "input": "",
+    "output": "学习注释",
+    "sample_input": "",
+    "sample_output": "学习注释",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "", "output": "学习注释"}
+    ],
+    "hidden_test_cases": []
+  }
+]

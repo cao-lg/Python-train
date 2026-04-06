@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>题目详情 - Python 基础课程实训 OJ 系统</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>Python 基础课程实训 OJ 系统</h1>
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="problems.html">题库</a></li>
+                    <li><a href="user.html" id="user-link">个人中心</a></li>
+                    <li><button id="theme-toggle" class="theme-btn">🌙</button></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="problem-detail">
+            <div class="container">
+                <div class="problem-header">
+                    <h2 id="problem-title">题目名称</h2>
+                    <div class="problem-meta">
+                        <span class="category" id="problem-category">分类</span>
+                        <span class="difficulty" id="problem-difficulty">难度</span>
+                    </div>
+                </div>
+                <div class="problem-content">
+                    <div class="problem-description">
+                        <h3>题目描述</h3>
+                        <div id="problem-desc"></div>
+                    </div>
+                    <div class="problem-input">
+                        <h3>输入格式</h3>
+                        <div id="problem-input-text"></div>
+                    </div>
+                    <div class="problem-output">
+                        <h3>输出格式</h3>
+                        <div id="problem-output-text"></div>
+                    </div>
+                    <div class="problem-sample">
+                        <h3>样例输入</h3>
+                        <pre id="problem-sample-input"></pre>
+                        <h3>样例输出</h3>
+                        <pre id="problem-sample-output"></pre>
+                    </div>
+                </div>
+                <div class="code-editor">
+                    <h3>代码编辑器</h3>
+                    <div class="editor-wrapper">
+                        <div class="line-numbers" id="line-numbers">1</div>
+                        <div class="editor-container">
+                            <textarea id="code-input" placeholder="请输入 Python 代码..." spellcheck="false"></textarea>
+                        </div>
+                    </div>
+                    <div class="editor-actions">
+                        <button id="run-btn">▶️ 运行</button>
+                        <button id="submit-btn">✅ 提交</button>
+                        <button id="copy-btn">📋 复制</button>
+                        <button id="reset-btn">🔄 重置</button>
+                    </div>
+                </div>
+                <div class="console-output">
+                    <div class="console-header">
+                        <h4>控制台输出</h4>
+                    </div>
+                    <div id="console-text"></div>
+                </div>
+                <div class="submission-result">
+                    <h3>提交结果</h3>
+                    <div id="result-display">提交结果将在此显示</div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Python 基础课程实训 OJ 系统</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/core.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/engine-py.js"></script>
+    <script src="../js/submit.js"></script>
+    <script src="../js/loader.js"></script>
+    <script>
+        // 直接在页面加载完成后执行
+        window.addEventListener('load', async function() {
+            console.log('页面加载完成，开始初始化');
+            
+            // 获取URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const problemId = urlParams.get('id');
+            
+            if (!problemId) return;
+            
+            try {
+                // 等待数据库初始化
+                await new Promise(resolve => {
+                    const checkDB = setInterval(() => {
+                        if (window.db && window.db.problemDB) {
+                            clearInterval(checkDB);
+                            resolve();
+                        }
+                    }, 100);
+                });
+                
+                // 获取题目数据
+                let problem = await window.db.problemDB.findById(problemId);
+                
+                if (!problem) {
+                    // 尝试加载所有分类
+                    await window.loader.loadAllCategories();
+                    problem = await window.db.problemDB.findById(problemId);
+                }
+                
+                if (problem) {
+                    console.log('直接填充题目信息:', problem);
+                    
+                    // 直接获取元素并填充
+                    const titleEl = document.getElementById('problem-title');
+                    const categoryEl = document.getElementById('problem-category');
+                    const difficultyEl = document.getElementById('problem-difficulty');
+                    const descEl = document.getElementById('problem-desc');
+                    const inputTextEl = document.getElementById('problem-input-text');
+                    const outputTextEl = document.getElementById('problem-output-text');
+                    const sampleInputEl = document.getElementById('problem-sample-input');
+                    const sampleOutputEl = document.getElementById('problem-sample-output');
+                    
+                    console.log('直接获取元素:', {
+                        titleEl,
+                        categoryEl,
+                        difficultyEl,
+                        descEl,
+                        inputTextEl,
+                        outputTextEl,
+                        sampleInputEl,
+                        sampleOutputEl
+                    });
+                    
+                    // 填充数据
+                    if (titleEl) titleEl.textContent = problem.title;
+                    if (categoryEl) categoryEl.textContent = problem.category;
+                    if (difficultyEl) difficultyEl.textContent = problem.difficulty;
+                    if (descEl) descEl.innerHTML = problem.description || '题目描述';
+                    if (inputTextEl) inputTextEl.innerHTML = problem.input || '输入格式';
+                    if (outputTextEl) outputTextEl.innerHTML = problem.output || '输出格式';
+                    if (sampleInputEl) sampleInputEl.textContent = problem.sample_input || '样例输入';
+                    if (sampleOutputEl) sampleOutputEl.textContent = problem.sample_output || '样例输出';
+                    
+                    console.log('直接填充完成');
+                }
+            } catch (error) {
+                console.error('直接填充题目信息失败:', error);
+            }
+        });
+    </script>
+</body>
+</html>

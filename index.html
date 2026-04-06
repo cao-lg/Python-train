@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 编程实训 OJ 平台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>Python 编程实训 OJ 平台</h1>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="pages/problems.html">题目</a></li>
+                    <li><a href="pages/user.html" id="user-link">个人中心</a></li>
+                    <li><button id="theme-toggle" class="theme-btn">🌙</button></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2>欢迎来到 Python 编程实训平台</h2>
+                <p>基于 Pyodide 的纯前端在线评测系统，支持 1 万题以上题库</p>
+                <a href="pages/problems.html" class="btn">开始练习</a>
+            </div>
+        </section>
+        <section class="features">
+            <div class="container">
+                <h3>平台特色</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>纯前端实现</h4>
+                        <p>使用 Pyodide WebAssembly 在浏览器中运行 Python 代码</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>大规模题库</h4>
+                        <p>支持 1 万题以上，按分类分片加载，按需获取</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>响应式设计</h4>
+                        <p>适配桌面端和移动设备，随时随地练习编程</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>免费部署</h4>
+                        <p>纯静态网站，可直接部署到 Cloudflare Pages</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Python 编程实训 OJ 平台</p>
+        </div>
+    </footer>
+    <script src="js/db.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

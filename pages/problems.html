@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>题目列表 - Python 基础课程实训 OJ 系统</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>Python 基础课程实训 OJ 系统</h1>
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="problems.html">题库</a></li>
+                    <li><a href="user.html" id="user-link">个人中心</a></li>
+                    <li><button id="theme-toggle" class="theme-btn">🌙</button></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="problems-section">
+            <div class="container">
+                <h2>题目列表</h2>
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="搜索题目...">
+                        <button id="search-btn">搜索</button>
+                    </div>
+                    <div class="category-filter">
+                        <select id="category-select">
+                            <option value="all">全部分类</option>
+                            <option value="01-start">第1章：Python 入门</option>
+                            <option value="02-variable">第2章：变量与数据类型</option>
+                            <option value="03-input-output">第3章：输入与输出</option>
+                            <option value="04-if">第4章：条件语句</option>
+                            <option value="05-loop">第5章：循环语句</option>
+                            <option value="06-string">第6章：字符串操作</option>
+                            <option value="07-list">第7章：列表</option>
+                            <option value="08-dict">第8章：字典</option>
+                            <option value="09-function">第9章：函数</option>
+                            <option value="10-comprehensive">第10章：综合实战</option>
+                        </select>
+                    </div>
+                    <div class="difficulty-filter">
+                        <select id="difficulty-select">
+                            <option value="all">全部难度</option>
+                            <option value="easy">简单</option>
+                            <option value="medium">中等</option>
+                            <option value="hard">困难</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="problems-list">
+                </div>
+                <div class="pagination">
+                    <button id="prev-page">上一页</button>
+                    <span id="page-info">第 1 页，共 1 页</span>
+                    <button id="next-page">下一页</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Python 基础课程实训 OJ 系统</p>
+        </div>
+    </footer>
+    <script src="../js/db.js"></script>
+    <script src="../js/core.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/loader.js"></script>
+</body>
+</html>

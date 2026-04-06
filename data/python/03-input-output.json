@@ -1,0 +1,72 @@
+[
+  {
+    "id": 11,
+    "title": "输入姓名并欢迎",
+    "description": "输入一个姓名，输出：欢迎你，姓名",
+    "input": "张三",
+    "output": "欢迎你，张三",
+    "sample_input": "张三",
+    "sample_output": "欢迎你，张三",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "张三", "output": "欢迎你，张三"},
+      {"input": "李四", "output": "欢迎你，李四"}
+    ],
+    "hidden_test_cases": [
+      {"input": "王五", "output": "欢迎你，王五"}
+    ]
+  },
+  {
+    "id": 12,
+    "title": "输入两个整数求和 A+B",
+    "description": "输入两个整数，输出它们的和",
+    "input": "1 2",
+    "output": "3",
+    "sample_input": "1 2",
+    "sample_output": "3",
+    "difficulty": "easy",
+    "test_cases": [
+      {"input": "1 2", "output": "3"},
+      {"input": "10 20", "output": "30"}
+    ],
+    "hidden_test_cases": [
+      {"input": "100 200", "output": "300"}
+    ]
+  },
+  {
+    "id": 13,
+    "title": "输入半径求圆面积",
+    "description": "输入圆的半径，计算并输出圆的面积（π=3.14，面积=π*r²）",
+    "input": "5",
+    "output": "78.5",
+    "sample_input": "5",
+    "sample_output": "78.5",
+    "difficulty": "easy",
+    "test_cases": [{"input": "5", "output": "78.5"}, {"input": "10", "output": "314.0"}],
+    "hidden_test_cases": [{"input": "2", "output": "12.56"}]
+  },
+  {
+    "id": 14,
+    "title": "输入身高体重计算 BMI",
+    "description": "输入身高（米）和体重（公斤），计算 BMI 指数（BMI=体重/身高²）",
+    "input": "1.75 70",
+    "output": "22.86",
+    "sample_input": "1.75 70",
+    "sample_output": "22.86",
+    "difficulty": "easy",
+    "test_cases": [{"input": "1.75 70", "output": "22.86"}],
+    "hidden_test_cases": []
+  },
+  {
+    "id": 15,
+    "title": "格式化输出保留2位小数",
+    "description": "输入一个浮点数，输出保留2位小数",
+    "input": "3.1415926",
+    "output": "3.14",
+    "sample_input": "3.1415926",
+    "sample_output": "3.14",
+    "difficulty": "easy",
+    "test_cases": [{"input": "3.1415926", "output": "3.14"}],
+    "hidden_test_cases": []
+  }
+]
