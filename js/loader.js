@@ -352,31 +352,57 @@ async function initProblemDetail() {
 
 // 初始化函数
 async function initializeLoader() {
+    console.log('initializeLoader开始执行');
+    
     // 等待DOM加载完成
+    console.log('等待DOM加载完成，当前状态:', document.readyState);
     await new Promise(resolve => {
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', resolve);
+            console.log('DOM正在加载，等待DOMContentLoaded');
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('DOM加载完成');
+                resolve();
+            });
         } else {
+            console.log('DOM已经加载完成');
             resolve();
         }
     });
     
     // 等待数据库初始化
+    console.log('等待数据库初始化');
     await new Promise(resolve => {
+        let checkCount = 0;
+        const maxChecks = 20; // 最多检查20次（2秒）
         const checkDB = setInterval(() => {
+            checkCount++;
+            console.log(`检查数据库初始化状态 ${checkCount}/${maxChecks}:`, !!window.db);
+            
             if (window.db) {
+                console.log('数据库初始化成功');
                 clearInterval(checkDB);
                 resolve();
+            } else if (checkCount >= maxChecks) {
+                console.error('数据库初始化超时');
+                clearInterval(checkDB);
+                resolve(); // 超时后继续执行
             }
         }, 100);
     });
     
     // 根据当前页面初始化
+    console.log('当前页面路径:', window.location.pathname);
     if (window.location.pathname.includes('problems.html')) {
+        console.log('初始化题目列表');
         await initProblemsList();
     } else if (window.location.pathname.includes('detail.html')) {
+        console.log('初始化题目详情');
         await initProblemDetail();
+    } else {
+        console.log('非题目相关页面，跳过初始化');
     }
+    
+    console.log('initializeLoader执行完成');
 }
 
 // 立即执行初始化
