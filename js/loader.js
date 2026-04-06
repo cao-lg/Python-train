@@ -391,15 +391,22 @@ async function initializeLoader() {
     });
     
     // 根据当前页面初始化
-    console.log('当前页面路径:', window.location.pathname);
-    if (window.location.pathname.includes('problems')) {
+    const pathname = window.location.pathname;
+    console.log('当前页面路径:', pathname);
+    console.log('路径包含problems:', pathname.includes('problems'));
+    console.log('路径包含detail:', pathname.includes('detail'));
+    
+    if (pathname.includes('problems')) {
         console.log('初始化题目列表');
         await initProblemsList();
-    } else if (window.location.pathname.includes('detail')) {
+    } else if (pathname.includes('detail')) {
         console.log('初始化题目详情');
         await initProblemDetail();
     } else {
         console.log('非题目相关页面，跳过初始化');
+        // 强制初始化题目列表（测试）
+        console.log('强制初始化题目列表');
+        await initProblemsList();
     }
     
     console.log('initializeLoader执行完成');
