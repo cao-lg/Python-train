@@ -44,25 +44,33 @@ function initSubmit() {
             placeholder: '请输入 Python 代码...'
         });
         
-        // 设置编辑器高度
-        editor.setSize('100%', null);
+        // 设置编辑器高度 - 至少300px
+        editor.setSize('100%', '350px');
         
-        // 确保编辑器有最小高度并支持滚动
+        // 确保编辑器支持滚动
         const cmScroller = editor.getScrollerElement();
-        cmScroller.style.minHeight = '300px';
         cmScroller.style.overflowY = 'auto';
+        cmScroller.style.maxHeight = '500px';
         
-        // 当窗口大小改变时，刷新编辑器
+        // 当窗口大小改变时，重新计算编辑器高度
         window.addEventListener('resize', function() {
             if (editor) {
-                editor.refresh();
+                const container = document.querySelector('.editor-wrapper');
+                if (container) {
+                    const containerHeight = Math.max(350, container.clientHeight);
+                    editor.setSize('100%', Math.min(containerHeight, 500) + 'px');
+                }
             }
         });
         
-        // 延迟刷新编辑器
+        // 延迟设置一次高度
         setTimeout(function() {
             if (editor) {
-                editor.refresh();
+                const container = document.querySelector('.editor-wrapper');
+                if (container) {
+                    const containerHeight = Math.max(350, container.clientHeight);
+                    editor.setSize('100%', Math.min(containerHeight, 500) + 'px');
+                }
             }
         }, 100);
         

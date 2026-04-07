@@ -587,7 +587,8 @@ nav ul li a:hover {
 
 .editor-wrapper {
   flex: 1;
-  min-height: 300px;
+  min-height: 350px;
+  max-height: 500px;
   border: none;
   border-radius: 0;
   overflow: hidden;
@@ -598,15 +599,14 @@ nav ul li a:hover {
 
 #code-editor-container {
   flex: 1;
-  min-height: 300px;
+  min-height: 350px;
+  max-height: 500px;
   display: flex;
   flex-direction: column;
 }
 
 .editor-wrapper .CodeMirror {
-  flex: 1;
-  height: auto !important;
-  min-height: 300px;
+  height: 100% !important;
 }
 
 .problem-header {
