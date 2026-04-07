@@ -1,4 +1,4 @@
-// Python 判题引擎 - 基于 Pyodide（Assert 单元测试风格）
+// Python 判题引擎 - 基于 Pyodide
 
 let pyodide = null;
 
@@ -18,18 +18,45 @@ async function initPyodide() {
     return pyodide;
 }
 
-// 标准化输出（去空格、换行、大小写）
+// 标准化输出
 function normalizeOutput(output) {
     if (!output) return '';
     return output.toString()
         .replace(/\r\n/g, '\n')
         .replace(/\r/g, '\n')
-        .trim()
-        .toLowerCase();
+        .trim();
+}
+
+// 浮点数比较
+function floatClose(a, b, relTol = 1e-6, absTol = 1e-9) {
+    try {
+        const aFloat = parseFloat(a);
+        const bFloat = parseFloat(b);
+        if (isNaN(aFloat) || isNaN(bFloat)) return false;
+        return Math.abs(aFloat - bFloat) <= Math.max(relTol * Math.max(Math.abs(aFloat), Math.abs(bFloat)), absTol);
+    } catch {
+        return false;
+    }
+}
+
+// 比较输出
+function compareOutput(actual, expected) {
+    const actualNorm = normalizeOutput(actual);
+    const expectedNorm = normalizeOutput(expected);
+    
+    if (actualNorm === expectedNorm) {
+        return true;
+    }
+    
+    if (floatClose(actualNorm, expectedNorm)) {
+        return true;
+    }
+    
+    return false;
 }
 
 // 执行 Python 代码并捕获输出
-async function executeCode(code, timeout = 5000) {
+async function executeCodeWithInput(code, testInput, timeout = 5000) {
     await initPyodide();
     
     return new Promise(async (resolve, reject) => {
@@ -44,6 +71,9 @@ from io import StringIO
 
 old_stdout = sys.stdout
 old_stderr = sys.stderr
+old_stdin = sys.stdin
+
+sys.stdin = StringIO("""${(testInput || '').replace(/"/g, '\\"')}""")
 sys.stdout = StringIO()
 sys.stderr = StringIO()
 `;
@@ -53,6 +83,7 @@ stdout_output = sys.stdout.getvalue()
 stderr_output = sys.stderr.getvalue()
 sys.stdout = old_stdout
 sys.stderr = old_stderr
+sys.stdin = old_stdin
 (stdout_output, stderr_output)
 `;
             
@@ -69,8 +100,6 @@ sys.stderr = old_stderr
             if (error.name === 'PythonError') {
                 if (error.message.includes('SyntaxError')) {
                     reject({ type: 'CE', message: '语法错误: ' + error.message });
-                } else if (error.message.includes('AssertionError')) {
-                    reject({ type: 'WA', message: '答案错误: ' + error.message });
                 } else {
                     reject({ type: 'RE', message: '运行错误: ' + error.message });
                 }
@@ -81,7 +110,12 @@ sys.stderr = old_stderr
     });
 }
 
-// 使用 Assert 风格判题
+// 执行 Python 代码（不带输入）
+async function executeCode(code, timeout = 5000) {
+    return await executeCodeWithInput(code, '', timeout);
+}
+
+// 判题主函数
 async function judgeWithAssert(code, problem) {
     try {
         await initPyodide();
@@ -98,83 +132,47 @@ async function judgeWithAssert(code, problem) {
             });
         }
         
-        let allPassed = true;
-        let failedTest = null;
-        
         for (let i = 0; i < testCases.length; i++) {
             const testCase = testCases[i];
-            
-            const testCode = `
-# 用户代码
-${code}
-
-# 测试用例 ${i + 1}
-import sys
-from io import StringIO
-
-test_input = """${testCase.input.replace(/"/g, '\\"')}"""
-expected_output = """${testCase.expected.replace(/"/g, '\\"')}"""
-
-sys.stdin = StringIO(test_input)
-sys.stdout = StringIO()
-
-try:
-    exec("""${code.replace(/"/g, '\\"')}""")
-    actual_output = sys.stdout.getvalue()
-    
-    def normalize(s):
-        if not s:
-            return ''
-        return s.replace('\r\n', '\n').replace('\r', '\n').strip()
-    
-    def float_close(a, b, rel_tol=1e-6, abs_tol=1e-9):
-        try:
-            a_float = float(a)
-            b_float = float(b)
-            return abs(a_float - b_float) <= max(rel_tol * max(abs(a_float), abs(b_float)), abs_tol)
-        except:
-            return False
-    
-    def compare_output(actual, expected):
-        actual_norm = normalize(actual)
-        expected_norm = normalize(expected)
-        
-        if actual_norm == expected_norm:
-            return True
-        
-        if float_close(actual_norm, expected_norm):
-            return True
-        
-        return False
-    
-    assert compare_output(actual_output, expected_output), \
-        f"测试用例 {i + 1} 失败\n期望: {repr(expected_output)}\n实际: {repr(actual_output)}"
-        
-finally:
-    sys.stdin = sys.__stdin__
-    sys.stdout = sys.__stdout__
-`;
+            const testInput = testCase.input || '';
+            const expectedOutput = testCase.expected || '';
             
             try {
-                await executeCode(testCode, 5000);
+                const result = await executeCodeWithInput(code, testInput, 5000);
+                
+                if (result.stderr) {
+                    return {
+                        type: 'RE',
+                        message: '运行错误: ' + result.stderr,
+                        expected: expectedOutput,
+                        actual: result.stdout || ''
+                    };
+                }
+                
+                const actualOutput = result.stdout || '';
+                
+                if (!compareOutput(actualOutput, expectedOutput)) {
+                    return {
+                        type: 'WA',
+                        message: `测试用例 ${i + 1} 失败`,
+                        expected: expectedOutput,
+                        actual: actualOutput
+                    };
+                }
             } catch (error) {
-                allPassed = false;
-                failedTest = {
-                    index: i + 1,
-                    ...error
+                return {
+                    type: error.type || 'WA',
+                    message: error.message || `测试用例 ${i + 1} 失败`,
+                    expected: expectedOutput,
+                    actual: ''
                 };
-                break;
             }
         }
         
-        if (allPassed) {
-            return {
-                result: 'AC',
-                message: '✅ 通过所有测试用例！'
-            };
-        } else {
-            return failedTest;
-        }
+        return {
+            result: 'AC',
+            message: '✅ 通过所有测试用例！'
+        };
     } catch (error) {
         console.error('判题失败:', error);
         return {
@@ -194,7 +192,9 @@ async function judge(code, problemId) {
     const result = await judgeWithAssert(code, problem);
     return {
         result: result.type || result.result || 'ERROR',
-        message: result.message
+        message: result.message,
+        expected: result.expected,
+        actual: result.actual
     };
 }
 
@@ -211,7 +211,10 @@ window.addEventListener('DOMContentLoaded', async function() {
 window.engine = {
     initPyodide,
     executeCode,
+    executeCodeWithInput,
     judgeWithAssert,
     judge,
-    normalizeOutput
+    normalizeOutput,
+    compareOutput,
+    floatClose
 };
