@@ -34,47 +34,60 @@
                         <span class="difficulty" id="problem-difficulty">难度</span>
                     </div>
                 </div>
-                <div class="problem-content">
-                    <div class="problem-description">
-                        <h3>题目描述</h3>
-                        <div id="problem-desc"></div>
+                <div class="split-container">
+                    <div class="left-panel" id="left-panel">
+                        <div class="panel-header">
+                            <h3>题目信息</h3>
+                            <button class="toggle-btn" id="toggle-left" title="折叠/展开">
+                                <span id="toggle-icon">◀</span>
+                            </button>
+                        </div>
+                        <div class="problem-content">
+                            <div class="problem-description">
+                                <h4>题目描述</h4>
+                                <div id="problem-desc"></div>
+                            </div>
+                            <div class="problem-input">
+                                <h4>输入格式</h4>
+                                <div id="problem-input-text"></div>
+                            </div>
+                            <div class="problem-output">
+                                <h4>输出格式</h4>
+                                <div id="problem-output-text"></div>
+                            </div>
+                            <div class="problem-sample">
+                                <h4>样例输入</h4>
+                                <pre id="problem-sample-input"></pre>
+                                <h4>样例输出</h4>
+                                <pre id="problem-sample-output"></pre>
+                            </div>
+                        </div>
                     </div>
-                    <div class="problem-input">
-                        <h3>输入格式</h3>
-                        <div id="problem-input-text"></div>
+                    <div class="resizer" id="resizer"></div>
+                    <div class="right-panel" id="right-panel">
+                        <div class="code-editor">
+                            <h3>代码编辑器</h3>
+                            <div class="editor-wrapper">
+                                <div id="code-editor-container"></div>
+                            </div>
+                            <div class="editor-actions">
+                                <button id="run-btn">▶️ 运行</button>
+                                <button id="submit-btn">✅ 提交</button>
+                                <button id="copy-btn">📋 复制</button>
+                                <button id="reset-btn">🔄 重置</button>
+                            </div>
+                        </div>
+                        <div class="console-output">
+                            <div class="console-header">
+                                <h4>控制台输出</h4>
+                            </div>
+                            <div id="console-text"></div>
+                        </div>
+                        <div class="submission-result">
+                            <h3>提交结果</h3>
+                            <div id="result-display">提交结果将在此显示</div>
+                        </div>
                     </div>
-                    <div class="problem-output">
-                        <h3>输出格式</h3>
-                        <div id="problem-output-text"></div>
-                    </div>
-                    <div class="problem-sample">
-                        <h3>样例输入</h3>
-                        <pre id="problem-sample-input"></pre>
-                        <h3>样例输出</h3>
-                        <pre id="problem-sample-output"></pre>
-                    </div>
-                </div>
-                <div class="code-editor">
-                    <h3>代码编辑器</h3>
-                    <div class="editor-wrapper">
-                        <div id="code-editor-container"></div>
-                    </div>
-                    <div class="editor-actions">
-                        <button id="run-btn">▶️ 运行</button>
-                        <button id="submit-btn">✅ 提交</button>
-                        <button id="copy-btn">📋 复制</button>
-                        <button id="reset-btn">🔄 重置</button>
-                    </div>
-                </div>
-                <div class="console-output">
-                    <div class="console-header">
-                        <h4>控制台输出</h4>
-                    </div>
-                    <div id="console-text"></div>
-                </div>
-                <div class="submission-result">
-                    <h3>提交结果</h3>
-                    <div id="result-display">提交结果将在此显示</div>
                 </div>
             </div>
         </section>
@@ -94,9 +107,107 @@
     <script src="../js/submit.js"></script>
     <script src="../js/loader.js"></script>
     <script>
+        // 分栏布局功能
+        function initSplitLayout() {
+            const leftPanel = document.getElementById('left-panel');
+            const rightPanel = document.getElementById('right-panel');
+            const resizer = document.getElementById('resizer');
+            const toggleBtn = document.getElementById('toggle-left');
+            const toggleIcon = document.getElementById('toggle-icon');
+            
+            let isResizing = false;
+            let startX, startWidth;
+            let isCollapsed = false;
+            let originalFlex = null;
+            
+            // 折叠/展开功能
+            toggleBtn.addEventListener('click', () => {
+                isCollapsed = !isCollapsed;
+                if (isCollapsed) {
+                    originalFlex = leftPanel.style.flex;
+                    leftPanel.classList.add('collapsed');
+                    toggleIcon.textContent = '▶';
+                } else {
+                    leftPanel.classList.remove('collapsed');
+                    if (originalFlex) {
+                        leftPanel.style.flex = originalFlex;
+                    }
+                    toggleIcon.textContent = '◀';
+                }
+                // 延迟刷新 CodeMirror
+                setTimeout(() => {
+                    if (window.editor && window.editor.refresh) {
+                        window.editor.refresh();
+                    }
+                }, 350);
+            });
+            
+            // 拖拽调整功能
+            resizer.addEventListener('mousedown', (e) => {
+                if (isCollapsed) return;
+                isResizing = true;
+                startX = e.clientX;
+                startWidth = leftPanel.offsetWidth;
+                resizer.classList.add('active');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                const diff = e.clientX - startX;
+                const newWidth = Math.max(300, Math.min(600, startWidth + diff));
+                leftPanel.style.flex = 'none';
+                leftPanel.style.width = newWidth + 'px';
+                // 刷新 CodeMirror
+                if (window.editor && window.editor.refresh) {
+                    window.editor.refresh();
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    resizer.classList.remove('active');
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                }
+            });
+            
+            // 触摸支持
+            resizer.addEventListener('touchstart', (e) => {
+                if (isCollapsed) return;
+                isResizing = true;
+                startX = e.touches[0].clientX;
+                startWidth = leftPanel.offsetWidth;
+                resizer.classList.add('active');
+                e.preventDefault();
+            });
+            
+            document.addEventListener('touchmove', (e) => {
+                if (!isResizing) return;
+                const diff = e.touches[0].clientX - startX;
+                const newWidth = Math.max(300, Math.min(600, startWidth + diff));
+                leftPanel.style.flex = 'none';
+                leftPanel.style.width = newWidth + 'px';
+                if (window.editor && window.editor.refresh) {
+                    window.editor.refresh();
+                }
+            });
+            
+            document.addEventListener('touchend', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    resizer.classList.remove('active');
+                }
+            });
+        }
+        
         // 直接在页面加载完成后执行
         window.addEventListener('load', async function() {
             console.log('页面加载完成，开始初始化');
+            // 初始化分栏布局
+            initSplitLayout();
             
             // 获取URL参数
             const urlParams = new URLSearchParams(window.location.search);

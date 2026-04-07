@@ -45,7 +45,7 @@ function initSubmit() {
         });
         
         // 设置编辑器高度
-        editor.setSize('100%', '400px');
+        editor.setSize('100%', '100%');
         
         // 根据主题切换编辑器主题
         const updateEditorTheme = () => {
@@ -64,6 +64,9 @@ function initSubmit() {
         updateEditorTheme();
         
         console.log('CodeMirror 编辑器初始化完成');
+        
+        // 暴露编辑器到 window 对象
+        window.editor = editor;
         
         // 编辑器内容变化时自动保存
         editor.on('change', function() {
