@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pyodide 初始化测试</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+    .success { background-color: #d4edda; color: #155724; }
+    .error { background-color: #f8d7da; color: #721c24; }
+    .warning { background-color: #fff3cd; color: #856404; }
+  </style>
+</head>
+<body>
+  <h1>Pyodide 初始化测试</h1>
+  
+  <div id="pyodide-status" class="test-result">正在初始化 Pyodide...</div>
+  <div id="db-status" class="test-result">正在检查数据库...</div>
+  <div id="findbyid-test" class="test-result">准备测试 findById 方法...</div>
+  
+  <!-- 加载必要的脚本 -->
+  <script src="js/db.js"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+  <script src="js/engine-py.js"></script>
+  
+  <script>
+    // 测试数据库功能
+    async function testDatabase() {
+      const dbStatus = document.getElementById('db-status');
+      
+      if (window.db && window.db.problemDB) {
+        dbStatus.className = 'test-result success';
+        dbStatus.textContent = '✅ window.db.problemDB 存在';
+        
+        // 测试 findById 方法
+        const findByIdTest = document.getElementById('findbyid-test');
+        try {
+          // 先添加一个测试题目
+          await window.db.problemDB.create({
+            id: 1,
+            title: '测试题目',
+            description: '这是一个测试题目',
+            sample_input: '1 2',
+            sample_output: '3'
+          });
+          
+          const problem = await window.db.problemDB.findById(1);
+          if (problem) {
+            findByIdTest.className = 'test-result success';
+            findByIdTest.textContent = `✅ 成功获取问题 ID 为 1 的数据: ${problem.title}`;
+          } else {
+            findByIdTest.className = 'test-result warning';
+            findByIdTest.textContent = '⚠ 未找到问题 ID 为 1 的数据';
+          }
+        } catch (error) {
+          findByIdTest.className = 'test-result error';
+          findByIdTest.textContent = `✗ 调用 findById 方法时出错: ${error.message}`;
+        }
+      } else {
+        dbStatus.className = 'test-result error';
+        dbStatus.textContent = '✗ window.db 或 window.db.problemDB 不存在';
+      }
+    }
+    
+    // 测试 Pyodide 初始化
+    async function testPyodide() {
+      const pyodideStatus = document.getElementById('pyodide-status');
+      
+      try {
+        if (window.engine && window.engine.initPyodide) {
+          await window.engine.initPyodide();
+          pyodideStatus.className = 'test-result success';
+          pyodideStatus.textContent = '✅ Pyodide 初始化成功!';
+        } else {
+          pyodideStatus.className = 'test-result error';
+          pyodideStatus.textContent = '✗ window.engine 或 window.engine.initPyodide 不存在';
+        }
+      } catch (error) {
+        pyodideStatus.className = 'test-result error';
+        pyodideStatus.textContent = `✗ Pyodide 初始化失败: ${error.message}`;
+      }
+    }
+    
+    // 页面加载完成后执行测试
+    window.addEventListener('DOMContentLoaded', async function() {
+      await testPyodide();
+      await testDatabase();
+    });
+  </script>
+</body>
+</html>

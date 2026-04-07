@@ -115,6 +115,123 @@ async function executeCode(code, timeout = 5000) {
     return await executeCodeWithInput(code, '', timeout);
 }
 
+// 执行带断言的 Python 代码
+async function executeCodeWithAssert(code, testCase, timeout = 5000) {
+    await initPyodide();
+    
+    return new Promise(async (resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            reject({ type: 'TLE', message: '执行超时（超过5秒）' });
+        }, timeout);
+        
+        try {
+            // 构建测试代码
+            let testCode = '';
+            
+            // 如果有输入，设置标准输入
+            if (testCase.input) {
+                testCode += `
+import sys
+from io import StringIO
+old_stdin = sys.stdin
+sys.stdin = StringIO("""${testCase.input.replace(/"/g, '\\"')}""")
+`;
+            }
+            
+            // 添加用户代码
+            testCode += code;
+            
+            // 添加断言代码
+            if (testCase.validator) {
+                // 使用自定义验证器
+                testCode += `\n${testCase.validator}`;
+            } else if (testCase.expected) {
+                // 检测硬编码输出
+                const expectedNormalized = normalizeOutput(testCase.expected);
+                const codeLower = code.toLowerCase();
+                
+                // 检查代码中是否直接包含预期输出
+                if (codeLower.includes(expectedNormalized.toLowerCase())) {
+                    reject({ 
+                        type: 'WA', 
+                        message: '硬编码输出错误: 代码中直接包含了预期输出，而不是通过计算得到结果。请修改代码，通过正确的计算逻辑生成输出。' 
+                    });
+                    return;
+                }
+                
+                // 使用默认输出验证
+                testCode += `
+import sys
+from io import StringIO
+old_stdout = sys.stdout
+sys.stdout = StringIO()
+
+# 重新执行用户代码以捕获输出
+${code}
+
+actual_output = sys.stdout.getvalue()
+sys.stdout = old_stdout
+
+expected_output = """${testCase.expected.replace(/"/g, '\\"')}"""
+
+# 标准化输出进行比较
+def normalize_output(output):
+    if not output:
+        return ''
+    return output.strip()
+
+actual_normalized = normalize_output(actual_output)
+expected_normalized = normalize_output(expected_output)
+
+# 浮点数比较
+def float_close(a, b, rel_tol=1e-6, abs_tol=1e-9):
+    try:
+        a_float = float(a)
+        b_float = float(b)
+        if a_float != a_float or b_float != b_float:  # 检查 NaN
+            return False
+        return abs(a_float - b_float) <= max(rel_tol * max(abs(a_float), abs(b_float)), abs_tol)
+    except:
+        return False
+
+# 执行断言
+if actual_normalized == expected_normalized:
+    pass
+elif float_close(actual_normalized, expected_normalized):
+    pass
+else:
+    raise AssertionError(f"输出不匹配: 期望 '{expected_normalized}', 实际 '{actual_normalized}'")
+`;
+            }
+            
+            // 清理代码
+            if (testCase.input) {
+                testCode += `\nsys.stdin = old_stdin\n`;
+            }
+            
+            // 执行测试代码
+            await pyodide.runPythonAsync(testCode);
+            
+            clearTimeout(timeoutId);
+            resolve({ success: true });
+        } catch (error) {
+            clearTimeout(timeoutId);
+            
+            if (error.name === 'PythonError') {
+                if (error.message.includes('SyntaxError')) {
+                    reject({ type: 'CE', message: '语法错误: ' + error.message });
+                } else if (error.message.includes('AssertionError')) {
+                    reject({ type: 'WA', message: '断言失败: ' + error.message });
+                } else {
+                    reject({ type: 'RE', message: '运行错误: ' + error.message });
+                }
+            } else {
+                reject({ type: 'RE', message: '未知错误: ' + error.message });
+            }
+        }
+    });
+}
+
 // 判题主函数
 async function judgeWithAssert(code, problem) {
     try {
@@ -134,38 +251,103 @@ async function judgeWithAssert(code, problem) {
         
         for (let i = 0; i < testCases.length; i++) {
             const testCase = testCases[i];
-            const testInput = testCase.input || '';
-            const expectedOutput = testCase.output || testCase.expected || '';
             
             try {
-                const result = await executeCodeWithInput(code, testInput, 5000);
-                
-                if (result.stderr) {
-                    return {
-                        type: 'RE',
-                        message: '运行错误: ' + result.stderr,
-                        expected: expectedOutput,
-                        actual: result.stdout || ''
-                    };
-                }
-                
-                const actualOutput = result.stdout || '';
-                
-                if (!compareOutput(actualOutput, expectedOutput)) {
-                    return {
-                        type: 'WA',
-                        message: `测试用例 ${i + 1} 失败`,
-                        expected: expectedOutput,
-                        actual: actualOutput
-                    };
-                }
+                await executeCodeWithAssert(code, testCase, 5000);
             } catch (error) {
                 return {
                     type: error.type || 'WA',
                     message: error.message || `测试用例 ${i + 1} 失败`,
-                    expected: expectedOutput,
+                    expected: testCase.output || testCase.expected || '',
                     actual: ''
                 };
+            }
+        }
+        
+        // 生成动态测试用例（如果问题配置了生成器）
+        if (problem.dynamic_test_generator) {
+            try {
+                await initPyodide();
+                
+                // 执行动态测试生成器
+                const generatorCode = `
+${problem.dynamic_test_generator}
+
+# 生成测试用例
+test_cases = generate_tests()
+
+# 执行每个动态生成的测试用例
+for i, test_case in enumerate(test_cases):
+    # 准备测试环境
+    import sys
+    from io import StringIO
+    
+    old_stdin = sys.stdin
+    old_stdout = sys.stdout
+    
+    # 设置输入
+    if 'input' in test_case:
+        sys.stdin = StringIO(test_case['input'])
+    
+    # 捕获输出
+    sys.stdout = StringIO()
+    
+    # 执行用户代码
+    ${code}
+    
+    # 恢复标准流
+    actual_output = sys.stdout.getvalue()
+    sys.stdout = old_stdout
+    if 'input' in test_case:
+        sys.stdin = old_stdin
+    
+    # 验证结果
+    if 'validator' in test_case:
+        # 使用自定义验证器
+        locals()['actual_output'] = actual_output
+        exec(test_case['validator'])
+    elif 'expected' in test_case:
+        # 标准输出验证
+        def normalize_output(output):
+            if not output:
+                return ''
+            return output.strip()
+        
+        def float_close(a, b, rel_tol=1e-6, abs_tol=1e-9):
+            try:
+                a_float = float(a)
+                b_float = float(b)
+                if a_float != a_float or b_float != b_float:  # 检查 NaN
+                    return False
+                return abs(a_float - b_float) <= max(rel_tol * max(abs(a_float), abs(b_float)), abs_tol)
+            except:
+                return False
+        
+        actual_normalized = normalize_output(actual_output)
+        expected_normalized = normalize_output(test_case['expected'])
+        
+        # 检查硬编码输出
+        import re
+        code_lower = """${code.toLowerCase().replace(/"/g, '\\"')}"""
+        if expected_normalized.lower() in code_lower:
+            raise AssertionError(f"动态测试用例 {i + 1} 失败: 硬编码输出错误 - 代码中直接包含了预期输出，而不是通过计算得到结果")
+        
+        if actual_normalized != expected_normalized and not float_close(actual_normalized, expected_normalized):
+            raise AssertionError(f"动态测试用例 {i + 1} 失败: 期望 '{expected_normalized}', 实际 '{actual_normalized}'")
+`;
+                
+                await pyodide.runPythonAsync(generatorCode);
+            } catch (error) {
+                if (error.name === 'PythonError' && error.message.includes('AssertionError')) {
+                    return {
+                        type: 'WA',
+                        message: '动态测试用例失败: ' + error.message,
+                        expected: '',
+                        actual: ''
+                    };
+                }
+                // 动态测试生成失败不影响整体结果，继续执行
+                console.warn('动态测试生成失败:', error);
             }
         }
         

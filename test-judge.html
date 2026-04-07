@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>判题逻辑测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        #output {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>判题逻辑测试</h1>
+        <button onclick="runTests()">开始测试</button>
+        <div id="output"></div>
+    </div>
+
+    <!-- 重定向 console.log 到页面 -->
+    <script>
+        const output = document.getElementById('output');
+        console.log = function(message) {
+            output.innerHTML += message + '\n';
+            output.scrollTop = output.scrollHeight;
+        };
+        console.error = function(message) {
+            output.innerHTML += '<span style="color: red;">错误: ' + message + '</span>\n';
+            output.scrollTop = output.scrollHeight;
+        };
+    </script>
+
+    <!-- 加载 Pyodide -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+
+    <!-- 加载判题引擎 -->
+    <script src="js/engine-py.js"></script>
+
+    <!-- 加载测试脚本 -->
+    <script src="test-actual-engine.js"></script>
+</body>
+</html>
