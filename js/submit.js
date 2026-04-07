@@ -45,7 +45,27 @@ function initSubmit() {
         });
         
         // 设置编辑器高度
-        editor.setSize('100%', '100%');
+        editor.setSize('100%', '300px');
+        
+        // 当窗口大小改变时，重新调整编辑器高度
+        window.addEventListener('resize', function() {
+            if (editor) {
+                const container = document.querySelector('.editor-wrapper');
+                if (container) {
+                    editor.setSize('100%', container.clientHeight + 'px');
+                }
+            }
+        });
+        
+        // 延迟设置一次高度，确保容器大小已计算完成
+        setTimeout(function() {
+            if (editor) {
+                const container = document.querySelector('.editor-wrapper');
+                if (container) {
+                    editor.setSize('100%', container.clientHeight + 'px');
+                }
+            }
+        }, 100);
         
         // 根据主题切换编辑器主题
         const updateEditorTheme = () => {
