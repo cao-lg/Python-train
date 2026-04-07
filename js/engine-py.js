@@ -145,13 +145,15 @@ sys.stdin = StringIO("""${testCase.input.replace(/"/g, '\\"')}""")
             if (testCase.validator) {
                 // 使用自定义验证器
                 testCode += `\n${testCase.validator}`;
-            } else if (testCase.expected) {
+            } else if (testCase.expected || testCase.output) {
+                // 获取期望输出（优先使用 output 字段）
+                const expectedValue = testCase.output || testCase.expected;
                 // 检测硬编码输出
-                const expectedNormalized = normalizeOutput(testCase.expected);
+                const expectedNormalized = normalizeOutput(expectedValue);
                 const codeLower = code.toLowerCase();
                 
                 // 检查代码中是否直接包含预期输出
-                if (codeLower.includes(expectedNormalized.toLowerCase())) {
+                if (expectedNormalized && codeLower.includes(expectedNormalized.toLowerCase())) {
                     reject({ 
                         type: 'WA', 
                         message: '硬编码输出错误: 代码中直接包含了预期输出，而不是通过计算得到结果。请修改代码，通过正确的计算逻辑生成输出。' 
@@ -172,7 +174,7 @@ ${code}
 actual_output = sys.stdout.getvalue()
 sys.stdout = old_stdout
 
-expected_output = """${testCase.expected.replace(/"/g, '\\"')}"""
+expected_output = """${expectedValue.replace(/"/g, '\\"')}"""
 
 # 标准化输出进行比较
 def normalize_output(output):
