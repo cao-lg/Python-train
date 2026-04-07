@@ -184,7 +184,7 @@ async function judgeWithAssert(code, problem) {
 
 // 兼容旧接口
 async function judge(code, problemId) {
-    const problem = await db.problemDB.findById(problemId);
+    const problem = await window.db.problemDB.findById(problemId);
     if (!problem) {
         return { result: 'ERROR', message: '题目不存在' };
     }
