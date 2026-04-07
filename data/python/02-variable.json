@@ -8,6 +8,7 @@
     "sample_input": "",
     "sample_output": "我的名字是张三",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [{"input": "", "output": "我的名字是张三"}],
     "hidden_test_cases": [{"input": "", "output": "我的名字是张三"}]
   },
@@ -20,6 +21,7 @@
     "sample_input": "",
     "sample_output": "13.5",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [{"input": "", "output": "13.5"}],
     "hidden_test_cases": [{"input": "", "output": "13.5"}]
   },
@@ -32,6 +34,7 @@
     "sample_input": "",
     "sample_output": "100\n<class 'int'>",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [{"input": "", "output": "100\n<class 'int'>"}],
     "hidden_test_cases": [{"input": "", "output": "100\n<class 'int'>"}]
   },
@@ -44,6 +47,7 @@
     "sample_input": "",
     "sample_output": "31.4",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [{"input": "", "output": "31.4"}],
     "hidden_test_cases": [{"input": "", "output": "31.4"}]
   },
@@ -56,6 +60,7 @@
     "sample_input": "",
     "sample_output": "a=20, b=10",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [{"input": "", "output": "a=20, b=10"}],
     "hidden_test_cases": [{"input": "", "output": "a=20, b=10"}]
   }

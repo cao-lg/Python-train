@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>判题逻辑测试</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="js/engine-py.js"></script>
+</head>
+<body>
+    <h1>判题逻辑测试 - Hello World</h1>
+    
+    <h2>测试代码：print('Hello World')</h2>
+    <button onclick="testHelloWorld()">测试判题</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        async function testHelloWorld() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>正在初始化 Pyodide...</p>';
+            
+            try {
+                const code = "print('Hello World')";
+                const problem = {
+                    id: 1,
+                    title: "输出 Hello World",
+                    test_cases: [
+                        {"input": "", "output": "Hello World"}
+                    ],
+                    hidden_test_cases: [
+                        {"input": "", "output": "Hello World"}
+                    ]
+                };
+                
+                resultDiv.innerHTML += '<p>开始判题...</p>';
+                const result = await window.engine.judgeWithAssert(code, problem);
+                
+                resultDiv.innerHTML += `<p><strong>判题结果：</strong>${JSON.stringify(result)}</p>`;
+                
+                if (result.result === 'AC') {
+                    resultDiv.innerHTML += '<p style="color: green; font-weight: bold;">✅ 通过！</p>';
+                } else {
+                    resultDiv.innerHTML += '<p style="color: red; font-weight: bold;">❌ 失败！</p>';
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML += `<p style="color: red;">错误：${error.message}</p>`;
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

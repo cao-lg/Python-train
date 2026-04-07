@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>基于题目类型的评分系统测试</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="js/scoring-engine.js"></script>
+    <script src="js/type-based-scoring.js"></script>
+    <script src="js/engine-py.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-case { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .code-input { width: 100%; height: 100px; font-family: monospace; font-size: 14px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .result { margin-top: 10px; padding: 10px; border-radius: 4px; }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; font-size: 14px; cursor: pointer; margin: 5px; }
+        .score-details { margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+        .score-item { margin: 5px 0; }
+        .test-results { margin-top: 10px; max-height: 300px; overflow-y: auto; }
+        .test-item { padding: 5px; margin: 5px 0; border-left: 3px solid #007bff; background: #e7f3ff; }
+    </style>
+</head>
+<body>
+    <h1>基于题目类型的评分系统测试</h1>
+    
+    <h2>1. 标准输出型 (STDIO)</h2>
+    <div class="test-case">
+        <h3>题目：输出 Hello World</h3>
+        <textarea class="code-input" id="code-stdio">print('Hello World')</textarea>
+        <button onclick="testSTDIO()">测试评分</button>
+        <div id="result-stdio" class="result"></div>
+    </div>
+    
+    <h2>2. 函数调用型 (FUNCTION)</h2>
+    <div class="test-case">
+        <h3>题目：实现 add 函数</h3>
+        <textarea class="code-input" id="code-function">def add(a, b):
+    return a + b</textarea>
+        <button onclick="testFUNCTION()">测试评分</button>
+        <div id="result-function" class="result"></div>
+    </div>
+    
+    <h2>3. 类实现型 (CLASS)</h2>
+    <div class="test-case">
+        <h3>题目：实现 Student 类</h3>
+        <textarea class="code-input" id="code-class">class Student:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    def get_info(self):
+        return f'{self.name}, {self.age}岁'</textarea>
+        <button onclick="testCLASS()">测试评分</button>
+        <div id="result-class" class="result"></div>
+    </div>
+    
+    <h2>4. 异常判断型 (EXCEPTION)</h2>
+    <div class="test-case">
+        <h3>题目：输入负数抛出异常</h3>
+        <textarea class="code-input" id="code-exception">def check_positive(n):
+    if n < 0:
+        raise ValueError('必须输入正数')
+    return n</textarea>
+        <button onclick="testEXCEPTION()">测试评分</button>
+        <div id="result-exception" class="result"></div>
+    </div>
+    
+    <h2>5. 代码结构检查型 (SYNTAX_STRUCT)</h2>
+    <div class="test-case">
+        <h3>题目：使用 for 循环计算和（禁止使用 sum 函数）</h3>
+        <textarea class="code-input" id="code-struct">def calculate_sum(n):
+    total = 0
+    for i in range(n+1):
+        total += i
+    return total</textarea>
+        <button onclick="testSYNTAX_STRUCT()">测试评分</button>
+        <div id="result-struct" class="result"></div>
+    </div>
+    
+    <h2>6. 综合大题型 (PROJECT)</h2>
+    <div class="test-case">
+        <h3>题目：综合项目</h3>
+        <textarea class="code-input" id="code-project">def greet(name):
+    return f'Hello, {name}!'
+
+class Greeting:
+    def __init__(self):
+        self.counter = 0
+    def greet(self, name):
+        self.counter += 1
+        return f'Greeting {self.counter}: Hello, {name}!'
+
+# 测试代码
+print(greet('World'))
+g = Greeting()
+print(g.greet('Alice'))
+print(g.greet('Bob'))</textarea>
+        <button onclick="testPROJECT()">测试评分</button>
+        <div id="result-project" class="result"></div>
+    </div>
+    
+    <script>
+        async function testSTDIO() {
+            const code = document.getElementById('code-stdio').value;
+            const problem = {
+                type: 'STDIO',
+                test_cases: [
+                    { input: '', output: 'Hello World' }
+                ]
+            };
+            await runTest(code, problem, 'result-stdio');
+        }
+        
+        async function testFUNCTION() {
+            const code = document.getElementById('code-function').value;
+            const problem = {
+                type: 'FUNCTION',
+                function_name: 'add',
+                test_cases: [
+                    { input: '1,2', output: 3 },
+                    { input: '3,4', output: 7 },
+                    { input: '10,20', output: 30 }
+                ]
+            };
+            await runTest(code, problem, 'result-function');
+        }
+        
+        async function testCLASS() {
+            const code = document.getElementById('code-class').value;
+            const problem = {
+                type: 'CLASS',
+                class_name: 'Student',
+                required_methods: ['__init__', 'get_info'],
+                test_cases: [
+                    { test_code: 's.get_info()', expected: 'Alice, 20岁' }
+                ]
+            };
+            await runTest(code, problem, 'result-class');
+        }
+        
+        async function testEXCEPTION() {
+            const code = document.getElementById('code-exception').value;
+            const problem = {
+                type: 'EXCEPTION',
+                test_cases: [
+                    {
+                        test_code: 'check_positive(-1)',
+                        exception_type: 'ValueError',
+                        exception_message: '必须输入正数'
+                    }
+                ]
+            };
+            await runTest(code, problem, 'result-exception');
+        }
+        
+        async function testSYNTAX_STRUCT() {
+            const code = document.getElementById('code-struct').value;
+            const problem = {
+                type: 'SYNTAX_STRUCT',
+                required_structures: ['for', 'range'],
+                forbidden_structures: ['sum('],
+                test_cases: [
+                    { input: '5', output: '15' },
+                    { input: '10', output: '55' }
+                ]
+            };
+            await runTest(code, problem, 'result-struct');
+        }
+        
+        async function testPROJECT() {
+            const code = document.getElementById('code-project').value;
+            const problem = {
+                type: 'PROJECT',
+                required_functions: ['greet'],
+                required_classes: ['Greeting'],
+                output_test_cases: [
+                    { input: '', output: 'Hello, World!\nGreeting 1: Hello, Alice!\nGreeting 2: Hello, Bob!' }
+                ]
+            };
+            await runTest(code, problem, 'result-project');
+        }
+        
+        async function runTest(code, problem, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.innerHTML = '<p>正在评分...</p>';
+            
+            try {
+                await window.engine.initPyodide();
+                const result = await window.engine.judgeByType(code, problem);
+                
+                if (result.scoring) {
+                    const s = result.scoring;
+                    let html = `
+                        <div class="score-details">
+                            <h4>评分结果</h4>
+                            <p>总分: ${s.totalScore}/100 (${s.grade})</p>
+                            <p>题目类型: ${s.type}</p>
+                            <div class="score-breakdown">
+                    `;
+                    
+                    for (const [key, item] of Object.entries(s.breakdown)) {
+                        html += `<div class="score-item">${item.label}: ${item.score}/${item.max}</div>`;
+                    }
+                    
+                    html += `</div>`;
+                    
+                    if (s.testResults && s.testResults.length > 0) {
+                        html += `
+                            <div class="test-results">
+                                <h5>测试用例结果</h5>
+                        `;
+                        
+                        for (const test of s.testResults) {
+                            const status = test.isPassed ? 'pass' : 'fail';
+                            html += `
+                                <div class="test-item ${status}">
+                                    <strong>测试 ${test.index + 1}:</strong> ${test.isPassed ? '通过' : '失败'}
+                                    ${test.input ? `<br>输入: ${test.input}` : ''}
+                                    ${test.expected ? `<br>期望: ${test.expected}` : ''}
+                                    ${test.actual ? `<br>实际: ${test.actual}` : ''}
+                                    ${test.error ? `<br>错误: ${test.error}` : ''}
+                                </div>
+                            `;
+                        }
+                        
+                        html += `</div>`;
+                    }
+                    
+                    html += `</div>`;
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<p class="fail">${result.message}</p>`;
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="fail">错误: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

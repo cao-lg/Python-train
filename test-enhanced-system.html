@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>增强版评分系统测试</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="js/scoring-engine.js"></script>
+    <script src="js/engine-py.js"></script>
+</head>
+<body>
+    <h1>增强版评分系统测试</h1>
+    
+    <div style="margin-bottom: 20px;">
+        <h3>测试代码：</h3>
+        <textarea id="code-input" rows="5" cols="60" style="font-family: monospace; font-size: 14px;">print('Hello World')</textarea>
+    </div>
+    
+    <button onclick="testScoring()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">测试评分</button>
+    
+    <div id="result" style="margin-top: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; max-width: 900px;"></div>
+    
+    <script>
+        async function testScoring() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>正在初始化...</p>';
+            
+            try {
+                const code = document.getElementById('code-input').value;
+                const problem = {
+                    id: 1,
+                    title: "输出 Hello World",
+                    test_cases: [
+                        {"input": "", "output": "Hello World"}
+                    ],
+                    hidden_test_cases: [
+                        {"input": "", "output": "Hello World"}
+                    ]
+                };
+                
+                resultDiv.innerHTML = '<p>正在判题...</p>';
+                
+                // 测试增强版判题
+                const judgeResult = await window.engine.judgeWithScoring(code, problem);
+                
+                console.log('判题结果:', judgeResult);
+                
+                // 显示结果
+                if (judgeResult.scoring) {
+                    const s = judgeResult.scoring;
+                    let html = `
+                        <h2>评分结果</h2>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 10px; color: white; margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <div>
+                                    <div style="font-size: 14px; opacity: 0.9;">总分</div>
+                                    <div style="font-size: 48px; font-weight: bold;">${s.totalScore} / ${s.maxScore}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 14px; opacity: 0.9;">等级</div>
+                                    <div style="font-size: 64px; font-weight: bold;">${s.grade}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3>各维度得分</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    `;
+                    
+                    for (const [key, item] of Object.entries(s.breakdown)) {
+                        const percentage = item.max > 0 ? (item.score / item.max) * 100 : 0;
+                        const barColor = percentage >= 80 ? '#22c55e' : percentage >= 60 ? '#eab308' : '#ef4444';
+                        
+                        html += `
+                            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <div style="font-size: 12px; color: #64748b; margin-bottom: 5px;">${item.label}</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #1e293b;">${item.score} / ${item.max}</div>
+                                <div style="margin-top: 8px; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                                    <div style="width: ${percentage}%; height: 100%; background: ${barColor}; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    html += `</div>`;
+                    
+                    // 测试用例详情
+                    if (judgeResult.execution && judgeResult.execution.testResults) {
+                        html += `
+                            <h3>测试用例详情</h3>
+                            <div style="max-height: 400px; overflow-y: auto;">
+                        `;
+                        
+                        for (const testCase of judgeResult.execution.testResults) {
+                            const statusIcon = testCase.isPassed ? '✅' : '❌';
+                            const bgColor = testCase.isPassed ? '#f0fdf4' : '#fef2f2';
+                            const borderColor = testCase.isPassed ? '#86efac' : '#fecaca';
+                            
+                            html += `
+                                <div style="padding: 15px; margin-bottom: 10px; border-radius: 8px; background: ${bgColor}; border: 1px solid ${borderColor};">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                        <span style="font-weight: bold; font-size: 16px;">测试用例 ${testCase.index + 1}</span>
+                                        <span style="font-size: 24px;">${statusIcon}</span>
+                                    </div>
+                                    ${testCase.input ? `<div style="margin-bottom: 5px;"><small>输入:</small> <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">${escapeHtml(testCase.input)}</code></div>` : ''}
+                                    <div style="margin-bottom: 5px;"><small>期望:</small> <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">${escapeHtml(testCase.expected)}</code></div>
+                                    <div><small>实际:</small> <code style="background: ${testCase.isPassed ? '#dcfce7' : '#fee2e2'}; padding: 2px 6px; border-radius: 4px;">${escapeHtml(testCase.actual || '(无输出)')}</code></div>
+                                    ${testCase.error ? `<div style="margin-top: 10px; color: #dc2626; font-size: 12px;">错误: ${escapeHtml(testCase.error)}</div>` : ''}
+                                </div>
+                            `;
+                        }
+                        
+                        html += `</div>`;
+                    }
+                    
+                    // 建议
+                    if (s.suggestions && s.suggestions.length > 0) {
+                        html += `
+                            <h3 style="margin-top: 20px;">💡 改进建议</h3>
+                            <div style="padding: 15px; background: #fefce8; border-radius: 8px; border: 1px solid #fde047;">
+                                <ul style="margin: 0; padding-left: 20px;">
+                        `;
+                        
+                        for (const suggestion of s.suggestions) {
+                            html += `<li style="margin-bottom: 5px; color: #713f12;">${escapeHtml(suggestion)}</li>`;
+                        }
+                        
+                        html += `</ul></div>`;
+                    }
+                    
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<pre>${JSON.stringify(judgeResult, null, 2)}</pre>`;
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">错误: ${error.message}</p><pre>${error.stack}</pre>`;
+                console.error(error);
+            }
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -201,8 +201,11 @@ async function handleRun() {
         }
         
         console.log('开始初始化 Pyodide');
+        // 显示初始化状态
+        consoleText.textContent = '初始化 Pyodide...';
         await window.engine.initPyodide();
         console.log('Pyodide 初始化完成');
+        consoleText.textContent = '执行代码中...';
         
         // 获取题目以获取样例输入
         let sampleInput = '';
@@ -229,7 +232,12 @@ async function handleRun() {
         console.log('已更新控制台输出');
     } catch (error) {
         console.error('运行代码失败:', error);
-        consoleText.textContent = '运行失败: ' + error.message;
+        // 提供更详细的错误信息
+        if (error.message.includes('Pyodide 初始化')) {
+            consoleText.textContent = 'Pyodide 初始化失败，请检查网络连接后重试';
+        } else {
+            consoleText.textContent = '运行失败: ' + error.message;
+        }
     }
     
     console.log('handleRun 函数执行结束');
@@ -261,15 +269,31 @@ async function handleSubmit() {
     
     try {
         // 检查 engine 是否加载
-        if (!window.engine || !window.engine.judge) {
+        if (!window.engine) {
             throw new Error('判题引擎未加载');
         }
         
-        // 调用判题引擎
-        const judgeResult = await window.engine.judge(code, currentProblemId);
+        // 显示初始化状态
+        resultDisplay.innerHTML = '<div class="loading">初始化判题引擎...</div>';
+        
+        // 确保 Pyodide 已初始化
+        await window.engine.initPyodide();
+        
+        // 显示判题中状态
+        resultDisplay.innerHTML = '<div class="loading">判题中...</div>';
+        
+        // 优先使用基于类型的判题引擎
+        let judgeResult;
+        if (window.engine.judgeWithType) {
+            judgeResult = await window.engine.judgeWithType(code, currentProblemId);
+        } else if (window.engine.judgeEnhanced) {
+            judgeResult = await window.engine.judgeEnhanced(code, currentProblemId);
+        } else {
+            judgeResult = await window.engine.judge(code, currentProblemId);
+        }
         
         // 显示结果
-        displayResult(judgeResult, resultDisplay);
+        displayResultEnhanced(judgeResult, resultDisplay);
         
         // 存储提交记录（仅当用户已登录时）
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -279,7 +303,12 @@ async function handleSubmit() {
         
     } catch (error) {
         console.error('提交失败:', error);
-        resultDisplay.innerHTML = '<div class="error">提交失败，请重试</div>';
+        // 提供更详细的错误信息
+        if (error.message && error.message.includes('Pyodide 初始化')) {
+            resultDisplay.innerHTML = '<div class="error">Pyodide 初始化失败，请检查网络连接后重试</div>';
+        } else {
+            resultDisplay.innerHTML = `<div class="error">提交失败: ${error.message || '请重试'}</div>`;
+        }
     } finally {
         submitBtn.disabled = false;
     }
@@ -294,7 +323,7 @@ function normalizeOutput(output) {
         .toLowerCase();
 }
 
-// 显示判题结果
+// 显示判题结果（兼容旧版）
 function displayResult(result, container) {
     let html = '';
     
@@ -335,6 +364,117 @@ function displayResult(result, container) {
     }
     
     container.innerHTML = html;
+}
+
+// 增强版结果显示 - 支持多维评分报告
+function displayResultEnhanced(result, container) {
+    let html = '';
+    
+    // 如果有评分信息，显示详细评分报告
+    if (result.scoring) {
+        const s = result.scoring;
+        const gradeColors = {
+            'A+': '#22c55e',
+            'A': '#84cc16',
+            'B': '#eab308',
+            'C': '#f97316',
+            'D': '#ef4444'
+        };
+        
+        html = `
+            <div class="scoring-report">
+                <div class="score-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white;">
+                    <div>
+                        <div style="font-size: 14px; opacity: 0.9;">总分</div>
+                        <div style="font-size: 36px; font-weight: bold;">${s.totalScore} / ${s.maxScore}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 14px; opacity: 0.9;">等级</div>
+                        <div style="font-size: 48px; font-weight: bold;">${s.grade}</div>
+                    </div>
+                </div>
+                
+                <div class="score-breakdown" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px;">
+        `;
+        
+        // 显示各维度得分
+        for (const [key, item] of Object.entries(s.breakdown)) {
+            const percentage = item.max > 0 ? (item.score / item.max) * 100 : 0;
+            const barColor = percentage >= 80 ? '#22c55e' : percentage >= 60 ? '#eab308' : '#ef4444';
+            
+            html += `
+                <div class="score-item" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <div style="font-size: 12px; color: #64748b; margin-bottom: 5px;">${item.label}</div>
+                    <div style="font-size: 24px; font-weight: bold; color: #1e293b;">${item.score} / ${item.max}</div>
+                    <div style="margin-top: 8px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                        <div style="width: ${percentage}%; height: 100%; background: ${barColor}; border-radius: 3px; transition: width 0.5s ease;"></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += `</div>`;
+        
+        // 显示测试用例详情
+        if (result.execution && result.execution.testResults) {
+            html += `
+                <div class="test-cases" style="margin-top: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #1e293b;">测试用例详情</h4>
+                    <div style="max-height: 300px; overflow-y: auto;">
+            `;
+            
+            for (const testCase of result.execution.testResults) {
+                const statusIcon = testCase.isPassed ? '✅' : '❌';
+                const statusClass = testCase.isPassed ? 'pass' : 'fail';
+                
+                html += `
+                    <div class="test-case ${statusClass}" style="padding: 12px; margin-bottom: 10px; border-radius: 8px; background: ${testCase.isPassed ? '#f0fdf4' : '#fef2f2'}; border: 1px solid ${testCase.isPassed ? '#86efac' : '#fecaca'};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: bold;">测试用例 ${testCase.index + 1}</span>
+                            <span>${statusIcon}</span>
+                        </div>
+                        ${testCase.input ? `<div style="margin-bottom: 5px;"><small>输入:</small> <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">${escapeHtml(testCase.input)}</code></div>` : ''}
+                        <div style="margin-bottom: 5px;"><small>期望:</small> <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">${escapeHtml(testCase.expected)}</code></div>
+                        <div><small>实际:</small> <code style="background: ${testCase.isPassed ? '#dcfce7' : '#fee2e2'}; padding: 2px 6px; border-radius: 4px;">${escapeHtml(testCase.actual || '(无输出)')}</code></div>
+                        ${testCase.error ? `<div style="margin-top: 8px; color: #dc2626; font-size: 12px;">错误: ${escapeHtml(testCase.error)}</div>` : ''}
+                    </div>
+                `;
+            }
+            
+            html += `</div></div>`;
+        }
+        
+        // 显示建议
+        if (s.suggestions && s.suggestions.length > 0) {
+            html += `
+                <div class="suggestions" style="margin-top: 20px; padding: 15px; background: #fefce8; border-radius: 8px; border: 1px solid #fde047;">
+                    <h4 style="margin-bottom: 10px; color: #854d0e;">💡 改进建议</h4>
+                    <ul style="margin: 0; padding-left: 20px;">
+            `;
+            
+            for (const suggestion of s.suggestions) {
+                html += `<li style="margin-bottom: 5px; color: #713f12;">${escapeHtml(suggestion)}</li>`;
+            }
+            
+            html += `</ul></div>`;
+        }
+        
+        html += `</div>`;
+        
+    } else {
+        // 回退到旧版显示
+        return displayResult(result, container);
+    }
+    
+    container.innerHTML = html;
+}
+
+// HTML 转义函数
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // 处理复制代码

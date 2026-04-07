@@ -8,6 +8,7 @@
     "sample_input": "3 5",
     "sample_output": "8",
     "difficulty": "easy",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "3 5", "output": "8"},
       {"input": "-1 1", "output": "0"},
@@ -26,6 +27,7 @@
     "sample_input": "3 7 5",
     "sample_output": "7",
     "difficulty": "easy",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "3 7 5", "output": "7"},
       {"input": "-1 -5 -3", "output": "-1"},
@@ -44,6 +46,7 @@
     "sample_input": "5",
     "sample_output": "120",
     "difficulty": "easy",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "5", "output": "120"},
       {"input": "0", "output": "1"},
@@ -62,6 +65,7 @@
     "sample_input": "17",
     "sample_output": "是素数",
     "difficulty": "medium",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "17", "output": "是素数"},
       {"input": "4", "output": "不是素数"},
@@ -80,6 +84,7 @@
     "sample_input": "5",
     "sample_output": "3",
     "difficulty": "medium",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "5", "output": "3"},
       {"input": "1", "output": "0"},
@@ -98,6 +103,7 @@
     "sample_input": "5\n1 2 3 4 5",
     "sample_output": "15",
     "difficulty": "medium",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "5\n1 2 3 4 5", "output": "15"},
       {"input": "3\n-1 0 1", "output": "0"},
@@ -116,6 +122,7 @@
     "sample_input": "Python",
     "sample_output": "nohtyP",
     "difficulty": "easy",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "Python", "output": "nohtyP"},
       {"input": "Hello", "output": "olleH"},
@@ -134,6 +141,7 @@
     "sample_input": "12 18",
     "sample_output": "6",
     "difficulty": "medium",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "12 18", "output": "6"},
       {"input": "7 13", "output": "1"},
@@ -152,6 +160,7 @@
     "sample_input": "racecar",
     "sample_output": "是回文",
     "difficulty": "medium",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "racecar", "output": "是回文"},
       {"input": "hello", "output": "不是回文"},
@@ -170,6 +179,7 @@
     "sample_input": "Alice",
     "sample_output": "Hello, Alice!",
     "difficulty": "easy",
+    "type": "FUNCTION",
     "test_cases": [
       {"input": "Alice", "output": "Hello, Alice!"},
       {"input": "Bob", "output": "Hello, Bob!"}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单测试 - 硬编码输出检测</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>简单测试 - 硬编码输出检测</h1>
+    <div id="test-results"></div>
+    
+    <!-- 加载 Pyodide -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <!-- 加载判题引擎 -->
+    <script src="js/engine-py.js"></script>
+    
+    <script>
+        // 显示测试结果
+        function displayResult(message, isPass) {
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${isPass ? 'pass' : 'fail'}`;
+            resultDiv.textContent = message;
+            resultsDiv.appendChild(resultDiv);
+        }
+        
+        // 测试硬编码输出检测
+        async function testHardcodeDetection() {
+            try {
+                // 初始化 Pyodide
+                await window.engine.initPyodide();
+                displayResult('Pyodide 初始化成功', true);
+                
+                // 测试用例 1: 硬编码输出（使用 output 字段）
+                const testCase1 = {
+                    input: '',
+                    output: '我是张三，今年18岁',
+                    expected: ''
+                };
+                
+                const hardcodedCode = `print('我是张三，今年18岁')`;
+                
+                try {
+                    await window.engine.executeCodeWithAssert(hardcodedCode, testCase1);
+                    displayResult('测试 1 失败: 硬编码输出应该被检测到', false);
+                } catch (error) {
+                    if (error && error.type === 'WA' && error.message && error.message.includes('硬编码输出错误')) {
+                        displayResult('测试 1 通过: 硬编码输出被正确检测到', true);
+                    } else {
+                        displayResult(`测试 1 失败: 错误类型不正确 - ${JSON.stringify(error)}`, false);
+                    }
+                }
+                
+                // 测试用例 2: 正确实现
+                const correctCode = `name = '张三'\nage = 18\nprint(f'我是{name}，今年{age}岁')`;
+                
+                try {
+                    await window.engine.executeCodeWithAssert(correctCode, testCase1);
+                    displayResult('测试 2 通过: 正确实现通过判题', true);
+                } catch (error) {
+                    displayResult(`测试 2 失败: 正确实现应该通过判题 - ${JSON.stringify(error)}`, false);
+                }
+                
+                // 测试用例 3: 硬编码输出（使用 expected 字段）
+                const testCase2 = {
+                    input: '',
+                    output: '',
+                    expected: 'Hello World'
+                };
+                
+                const hardcodedCode2 = `print('Hello World')`;
+                
+                try {
+                    await window.engine.executeCodeWithAssert(hardcodedCode2, testCase2);
+                    displayResult('测试 3 失败: 硬编码输出应该被检测到', false);
+                } catch (error) {
+                    if (error && error.type === 'WA' && error.message && error.message.includes('硬编码输出错误')) {
+                        displayResult('测试 3 通过: 硬编码输出被正确检测到（使用 expected 字段）', true);
+                    } else {
+                        displayResult(`测试 3 失败: 错误类型不正确 - ${JSON.stringify(error)}`, false);
+                    }
+                }
+                
+            } catch (error) {
+                displayResult(`初始化失败: ${JSON.stringify(error)}`, false);
+            }
+        }
+        
+        // 页面加载完成后运行测试
+        window.addEventListener('DOMContentLoaded', testHardcodeDetection);
+    </script>
+</body>
+</html>

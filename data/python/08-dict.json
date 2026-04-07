@@ -8,6 +8,7 @@
     "sample_input": "3\nname Alice\nage 20\ncity Beijing",
     "sample_output": "{'name': 'Alice', 'age': '20', 'city': 'Beijing'}",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "3\nname Alice\nage 20\ncity Beijing", "output": "{'name': 'Alice', 'age': '20', 'city': 'Beijing'}"},
       {"input": "1\na 1", "output": "{'a': '1'}"},
@@ -26,6 +27,7 @@
     "sample_input": "3\nname Alice\nage 20\ncity Beijing\nname",
     "sample_output": "Alice",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "3\nname Alice\nage 20\ncity Beijing\nname", "output": "Alice"},
       {"input": "3\nname Alice\nage 20\ncity Beijing\nphone", "output": "键不存在"}
@@ -43,6 +45,7 @@
     "sample_input": "hello",
     "sample_output": "{'h': 1, 'e': 1, 'l': 2, 'o': 1}",
     "difficulty": "medium",
+    "type": "STDIO",
     "test_cases": [
       {"input": "hello", "output": "{'h': 1, 'e': 1, 'l': 2, 'o': 1}"},
       {"input": "aaa", "output": "{'a': 3}"},
@@ -61,6 +64,7 @@
     "sample_input": "2\na 1\nb 2\n2\nb 3\nc 4",
     "sample_output": "{'a': '1', 'b': '3', 'c': '4'}",
     "difficulty": "medium",
+    "type": "STDIO",
     "test_cases": [
       {"input": "2\na 1\nb 2\n2\nb 3\nc 4", "output": "{'a': '1', 'b': '3', 'c': '4'}"},
       {"input": "0\n\n1\na 1", "output": "{'a': '1'}"}
@@ -78,6 +82,7 @@
     "sample_input": "3\na 10\nb 20\nc 15",
     "sample_output": "b",
     "difficulty": "medium",
+    "type": "STDIO",
     "test_cases": [
       {"input": "3\na 10\nb 20\nc 15", "output": "b"},
       {"input": "2\nx -5\ny -10", "output": "x"},

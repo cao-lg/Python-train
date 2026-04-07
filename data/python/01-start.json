@@ -8,6 +8,7 @@
     "sample_input": "",
     "sample_output": "Hello World",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "", "output": "Hello World"}
     ],
@@ -24,6 +25,7 @@
     "sample_input": "",
     "sample_output": "我是张三，今年18岁",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "", "output": "我是张三，今年18岁"}
     ],
@@ -40,6 +42,7 @@
     "sample_input": "",
     "sample_output": "Python 入门\n真有趣\n加油！",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "", "output": "Python 入门\n真有趣\n加油！"}
     ],
@@ -56,6 +59,7 @@
     "sample_input": "",
     "sample_output": "2",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "", "output": "2"}
     ],
@@ -72,6 +76,7 @@
     "sample_input": "",
     "sample_output": "学习注释",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "", "output": "学习注释"}
     ],

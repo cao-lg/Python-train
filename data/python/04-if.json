@@ -8,6 +8,7 @@
     "sample_input": "5",
     "sample_output": "正数",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "5", "output": "正数"},
       {"input": "-3", "output": "负数"},
@@ -27,6 +28,7 @@
     "sample_input": "7",
     "sample_output": "奇数",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "7", "output": "奇数"},
       {"input": "8", "output": "偶数"},
@@ -46,6 +48,7 @@
     "sample_input": "3 5",
     "sample_output": "a < b",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "3 5", "output": "a < b"},
       {"input": "10 2", "output": "a > b"},
@@ -65,6 +68,7 @@
     "sample_input": "2024",
     "sample_output": "闰年",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "2024", "output": "闰年"},
       {"input": "2023", "output": "平年"},
@@ -85,6 +89,7 @@
     "sample_input": "85",
     "sample_output": "B",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "85", "output": "B"},
       {"input": "95", "output": "A"},
@@ -105,6 +110,7 @@
     "sample_input": "5 9 3",
     "sample_output": "9",
     "difficulty": "easy",
+    "type": "STDIO",
     "test_cases": [
       {"input": "5 9 3", "output": "9"},
       {"input": "1 2 3", "output": "3"},
@@ -124,6 +130,7 @@
     "sample_input": "3 4 5",
     "sample_output": "能构成三角形",
     "difficulty": "medium",
+    "type": "STDIO",
     "test_cases": [
       {"input": "3 4 5", "output": "能构成三角形"},
       {"input": "1 2 3", "output": "不能构成三角形"},
@@ -143,6 +150,7 @@
     "sample_input": "2024 2",
     "sample_output": "29",
     "difficulty": "medium",
+    "type": "STDIO",
     "test_cases": [
       {"input": "2024 2", "output": "29"},
       {"input": "2023 2", "output": "28"},
@@ -163,6 +171,7 @@
     "sample_input": "A",
     "sample_output": "大写字母",
     "difficulty": "medium",
+    "type": "STDIO",
     "test_cases": [
       {"input": "A", "output": "大写字母"},
       {"input": "a", "output": "小写字母"},
@@ -183,6 +192,7 @@
     "sample_input": "5 + 3",
     "sample_output": "8",
     "difficulty": "medium",
+    "type": "STDIO",
     "test_cases": [
       {"input": "5 + 3", "output": "8"},
       {"input": "10 - 4", "output": "6"},

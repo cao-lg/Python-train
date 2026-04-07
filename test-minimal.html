@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>最简判题测试</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+</head>
+<body>
+    <h1>最简判题测试</h1>
+    <button onclick="testJudge()">测试判题</button>
+    <div id="result"></div>
+    
+    <script>
+        let pyodide = null;
+        
+        async function initPyodide() {
+            if (pyodide) return pyodide;
+            console.log('初始化 Pyodide...');
+            pyodide = await loadPyodide({
+                indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
+            });
+            console.log('Pyodide 初始化完成');
+            return pyodide;
+        }
+        
+        function normalizeOutput(output) {
+            if (!output) return '';
+            return output.toString()
+                .replace(/\r\n/g, '\n')
+                .replace(/\r/g, '\n')
+                .trim();
+        }
+        
+        function floatClose(a, b, relTol = 1e-6, absTol = 1e-9) {
+            try {
+                const aFloat = parseFloat(a);
+                const bFloat = parseFloat(b);
+                if (isNaN(aFloat) || isNaN(bFloat)) return false;
+                return Math.abs(aFloat - bFloat) <= Math.max(relTol * Math.max(Math.abs(aFloat), Math.abs(bFloat)), absTol);
+            } catch {
+                return false;
+            }
+        }
+        
+        function compareOutput(actual, expected) {
+            const actualNorm = normalizeOutput(actual);
+            const expectedNorm = normalizeOutput(expected);
+            
+            if (actualNorm === expectedNorm) {
+                return true;
+            }
+            
+            if (floatClose(actualNorm, expectedNorm)) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        async function executeCodeWithInput(code, testInput) {
+            await initPyodide();
+            
+            const setupCode = `
+import sys
+from io import StringIO
+
+old_stdout = sys.stdout
+old_stderr = sys.stderr
+old_stdin = sys.stdin
+
+sys.stdin = StringIO("""${(testInput || '').replace(/"/g, '\\"')}""")
+sys.stdout = StringIO()
+sys.stderr = StringIO()
+`;
+            
+            const cleanupCode = `
+stdout_output = sys.stdout.getvalue()
+stderr_output = sys.stderr.getvalue()
+sys.stdout = old_stdout
+sys.stderr = old_stderr
+sys.stdin = old_stdin
+(stdout_output, stderr_output)
+`;
+            
+            const result = await pyodide.runPythonAsync(setupCode + code + '\n' + cleanupCode);
+            return { stdout: result[0], stderr: result[1] };
+        }
+        
+        async function testJudge() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>开始测试...</p>';
+            
+            try {
+                const code = "print('Hello World')";
+                const testInput = "";
+                const expectedOutput = "Hello World";
+                
+                resultDiv.innerHTML += '<p>执行代码...</p>';
+                const result = await executeCodeWithInput(code, testInput);
+                
+                resultDiv.innerHTML += `<p>实际输出: '${result.stdout}'</p>`;
+                resultDiv.innerHTML += `<p>期望输出: '${expectedOutput}'</p>`;
+                
+                const isMatch = compareOutput(result.stdout, expectedOutput);
+                resultDiv.innerHTML += `<p>比较结果: ${isMatch ? '✅ 匹配' : '❌ 不匹配'}</p>`;
+                
+                if (isMatch) {
+                    resultDiv.innerHTML += '<p style="color: green; font-size: 20px; font-weight: bold;">✅ 判题成功！</p>';
+                } else {
+                    resultDiv.innerHTML += '<p style="color: red; font-size: 20px; font-weight: bold;">❌ 判题失败！</p>';
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML += `<p style="color: red;">错误: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

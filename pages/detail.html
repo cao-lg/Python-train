@@ -39,6 +39,11 @@
                             <div class="problem-meta">
                                 <span class="category" id="problem-category">分类</span>
                                 <span class="difficulty" id="problem-difficulty">难度</span>
+                                <span class="type" id="problem-type">类型</span>
+                            </div>
+                            <div class="problem-scoring-criteria" id="problem-scoring-criteria">
+                                <h4>评分标准</h4>
+                                <div id="scoring-criteria-content"></div>
                             </div>
                             <div class="problem-description">
                                 <h4>题目描述</h4>
@@ -100,6 +105,8 @@
     <script src="../js/db.js"></script>
     <script src="../js/core.js"></script>
     <script src="../js/app.js"></script>
+    <script src="../js/scoring-engine.js"></script>
+    <script src="../js/type-based-scoring.js"></script>
     <script src="../js/engine-py.js"></script>
     <script src="../js/submit.js"></script>
     <script src="../js/loader.js"></script>
@@ -239,32 +246,110 @@
                     const titleEl = document.getElementById('problem-title');
                     const categoryEl = document.getElementById('problem-category');
                     const difficultyEl = document.getElementById('problem-difficulty');
+                    const typeEl = document.getElementById('problem-type');
                     const descEl = document.getElementById('problem-desc');
                     const inputTextEl = document.getElementById('problem-input-text');
                     const outputTextEl = document.getElementById('problem-output-text');
                     const sampleInputEl = document.getElementById('problem-sample-input');
                     const sampleOutputEl = document.getElementById('problem-sample-output');
+                    const scoringCriteriaEl = document.getElementById('scoring-criteria-content');
                     
                     console.log('直接获取元素:', {
                         titleEl,
                         categoryEl,
                         difficultyEl,
+                        typeEl,
                         descEl,
                         inputTextEl,
                         outputTextEl,
                         sampleInputEl,
-                        sampleOutputEl
+                        sampleOutputEl,
+                        scoringCriteriaEl
                     });
                     
                     // 填充数据
                     if (titleEl) titleEl.textContent = problem.title;
                     if (categoryEl) categoryEl.textContent = problem.category;
                     if (difficultyEl) difficultyEl.textContent = problem.difficulty;
+                    if (typeEl) typeEl.textContent = problem.type || '未知类型';
                     if (descEl) descEl.innerHTML = problem.description || '题目描述';
                     if (inputTextEl) inputTextEl.innerHTML = problem.input || '输入格式';
                     if (outputTextEl) outputTextEl.innerHTML = problem.output || '输出格式';
                     if (sampleInputEl) sampleInputEl.textContent = problem.sample_input || '样例输入';
                     if (sampleOutputEl) sampleOutputEl.textContent = problem.sample_output || '样例输出';
+                    
+                    // 显示评分标准
+                    if (scoringCriteriaEl) {
+                        const type = problem.type || 'STDIO';
+                        let criteria = '';
+                        
+                        switch (type) {
+                            case 'STDIO':
+                                criteria = `
+                                    <ul>
+                                        <li>输出正确性：60分</li>
+                                        <li>代码质量：20分</li>
+                                        <li>执行效率：20分</li>
+                                    </ul>
+                                `;
+                                break;
+                            case 'FUNCTION':
+                                criteria = `
+                                    <ul>
+                                        <li>函数功能正确性：60分</li>
+                                        <li>函数签名正确性：20分</li>
+                                        <li>代码质量：20分</li>
+                                    </ul>
+                                `;
+                                break;
+                            case 'CLASS':
+                                criteria = `
+                                    <ul>
+                                        <li>类功能正确性：60分</li>
+                                        <li>类结构完整性：20分</li>
+                                        <li>代码质量：20分</li>
+                                    </ul>
+                                `;
+                                break;
+                            case 'EXCEPTION':
+                                criteria = `
+                                    <ul>
+                                        <li>异常处理正确性：60分</li>
+                                        <li>异常类型准确性：20分</li>
+                                        <li>代码质量：20分</li>
+                                    </ul>
+                                `;
+                                break;
+                            case 'SYNTAX_STRUCT':
+                                criteria = `
+                                    <ul>
+                                        <li>语法结构正确性：60分</li>
+                                        <li>代码风格：20分</li>
+                                        <li>可读性：20分</li>
+                                    </ul>
+                                `;
+                                break;
+                            case 'PROJECT':
+                                criteria = `
+                                    <ul>
+                                        <li>功能完整性：60分</li>
+                                        <li>代码组织：20分</li>
+                                        <li>文档完善度：20分</li>
+                                    </ul>
+                                `;
+                                break;
+                            default:
+                                criteria = `
+                                    <ul>
+                                        <li>输出正确性：60分</li>
+                                        <li>代码质量：20分</li>
+                                        <li>执行效率：20分</li>
+                                    </ul>
+                                `;
+                        }
+                        
+                        scoringCriteriaEl.innerHTML = criteria;
+                    }
                     
                     console.log('直接填充完成');
                 }
