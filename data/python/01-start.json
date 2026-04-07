@@ -11,7 +11,9 @@
     "test_cases": [
       {"input": "", "output": "Hello World"}
     ],
-    "hidden_test_cases": []
+    "hidden_test_cases": [
+      {"input": "", "output": "Hello World"}
+    ]
   },
   {
     "id": 2,
@@ -25,7 +27,9 @@
     "test_cases": [
       {"input": "", "output": "我是张三，今年18岁"}
     ],
-    "hidden_test_cases": []
+    "hidden_test_cases": [
+      {"input": "", "output": "我是张三，今年18岁"}
+    ]
   },
   {
     "id": 3,
@@ -39,7 +43,9 @@
     "test_cases": [
       {"input": "", "output": "Python 入门\n真有趣\n加油！"}
     ],
-    "hidden_test_cases": []
+    "hidden_test_cases": [
+      {"input": "", "output": "Python 入门\n真有趣\n加油！"}
+    ]
   },
   {
     "id": 4,
@@ -53,7 +59,9 @@
     "test_cases": [
       {"input": "", "output": "2"}
     ],
-    "hidden_test_cases": []
+    "hidden_test_cases": [
+      {"input": "", "output": "2"}
+    ]
   },
   {
     "id": 5,
@@ -67,6 +75,8 @@
     "test_cases": [
       {"input": "", "output": "学习注释"}
     ],
-    "hidden_test_cases": []
+    "hidden_test_cases": [
+      {"input": "", "output": "学习注释"}
+    ]
   }
 ]

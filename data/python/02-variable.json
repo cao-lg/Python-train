@@ -9,7 +9,7 @@
     "sample_output": "我的名字是张三",
     "difficulty": "easy",
     "test_cases": [{"input": "", "output": "我的名字是张三"}],
-    "hidden_test_cases": []
+    "hidden_test_cases": [{"input": "", "output": "我的名字是张三"}]
   },
   {
     "id": 7,
@@ -21,7 +21,7 @@
     "sample_output": "13.5",
     "difficulty": "easy",
     "test_cases": [{"input": "", "output": "13.5"}],
-    "hidden_test_cases": []
+    "hidden_test_cases": [{"input": "", "output": "13.5"}]
   },
   {
     "id": 8,
@@ -33,7 +33,7 @@
     "sample_output": "100\n<class 'int'>",
     "difficulty": "easy",
     "test_cases": [{"input": "", "output": "100\n<class 'int'>"}],
-    "hidden_test_cases": []
+    "hidden_test_cases": [{"input": "", "output": "100\n<class 'int'>"}]
   },
   {
     "id": 9,
@@ -45,7 +45,7 @@
     "sample_output": "31.4",
     "difficulty": "easy",
     "test_cases": [{"input": "", "output": "31.4"}],
-    "hidden_test_cases": []
+    "hidden_test_cases": [{"input": "", "output": "31.4"}]
   },
   {
     "id": 10,
@@ -57,6 +57,6 @@
     "sample_output": "a=20, b=10",
     "difficulty": "easy",
     "test_cases": [{"input": "", "output": "a=20, b=10"}],
-    "hidden_test_cases": []
+    "hidden_test_cases": [{"input": "", "output": "a=20, b=10"}]
   }
 ]

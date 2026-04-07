@@ -123,9 +123,31 @@ try:
     actual_output = sys.stdout.getvalue()
     
     def normalize(s):
-        return s.replace('\r\n', '\n').replace('\r', '\n').strip().lower()
+        if not s:
+            return ''
+        return s.replace('\r\n', '\n').replace('\r', '\n').strip()
     
-    assert normalize(actual_output) == normalize(expected_output), \
+    def float_close(a, b, rel_tol=1e-6, abs_tol=1e-9):
+        try:
+            a_float = float(a)
+            b_float = float(b)
+            return abs(a_float - b_float) <= max(rel_tol * max(abs(a_float), abs(b_float)), abs_tol)
+        except:
+            return False
+    
+    def compare_output(actual, expected):
+        actual_norm = normalize(actual)
+        expected_norm = normalize(expected)
+        
+        if actual_norm == expected_norm:
+            return True
+        
+        if float_close(actual_norm, expected_norm):
+            return True
+        
+        return False
+    
+    assert compare_output(actual_output, expected_output), \
         f"测试用例 {i + 1} 失败\n期望: {repr(expected_output)}\n实际: {repr(actual_output)}"
         
 finally:

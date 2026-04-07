@@ -255,13 +255,6 @@ async function handleSubmit() {
         return;
     }
     
-    // 检查用户登录状态
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) {
-        resultDisplay.innerHTML = '<div class="error">请先登录</div>';
-        return;
-    }
-    
     // 显示加载中
     submitBtn.disabled = true;
     resultDisplay.innerHTML = '<div class="loading">判题中...</div>';
@@ -278,8 +271,11 @@ async function handleSubmit() {
         // 显示结果
         displayResult(judgeResult, resultDisplay);
         
-        // 存储提交记录
-        await window.db.submissionDB.create(currentUser.id, currentProblemId, code, judgeResult.result);
+        // 存储提交记录（仅当用户已登录时）
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser && currentUser.id) {
+            await window.db.submissionDB.create(currentUser.id, currentProblemId, code, judgeResult.result);
+        }
         
     } catch (error) {
         console.error('提交失败:', error);
