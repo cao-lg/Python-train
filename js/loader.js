@@ -4,11 +4,20 @@
 const loadedCategories = new Set();
 
 // 加载指定分类的题目
-async function loadCategory(category) {
-    // 检查是否已经加载过
-    if (loadedCategories.has(category)) {
+async function loadCategory(category, force = false) {
+    // 检查是否已经加载过，除非强制重新加载
+    if (loadedCategories.has(category) && !force) {
         console.log(`分类 ${category} 已经加载过`);
         return true;
+    }
+    
+    // 如果强制重新加载，先清除该分类的旧数据
+    if (force) {
+        console.log(`强制重新加载分类 ${category}，清除旧数据`);
+        const problems = JSON.parse(localStorage.getItem('problems') || '[]');
+        const filteredProblems = problems.filter(p => p.category !== category);
+        localStorage.setItem('problems', JSON.stringify(filteredProblems));
+        loadedCategories.delete(category);
     }
     
     try {
@@ -38,6 +47,7 @@ async function loadCategory(category) {
                 sample_output: problem.sample_output,
                 category: category,
                 difficulty: problem.difficulty,
+                type: problem.type || 'STDIO',
                 test_cases: problem.test_cases,
                 hidden_test_cases: problem.hidden_test_cases
             });
@@ -54,9 +64,16 @@ async function loadCategory(category) {
 }
 
 // 加载所有分类的题目
-async function loadAllCategories() {
+async function loadAllCategories(force = false) {
+    // 如果强制重新加载，先清除所有旧数据
+    if (force) {
+        console.log('强制重新加载所有分类，清除旧数据');
+        localStorage.removeItem('problems');
+        loadedCategories.clear();
+    }
+    
     const categories = ['01-start', '02-variable', '03-input-output', '04-if', '05-loop', '06-string', '07-list', '08-dict', '09-function', '10-comprehensive'];
-    const promises = categories.map(category => loadCategory(category));
+    const promises = categories.map(category => loadCategory(category, force));
     const results = await Promise.all(promises);
     return results.every(result => result);
 }
@@ -69,12 +86,16 @@ async function initProblemsList() {
     const difficulty = urlParams.get('difficulty') || 'all';
     const page = parseInt(urlParams.get('page')) || 1;
     
-    // 如果指定了分类，加载该分类
-    if (category !== 'all' && !loadedCategories.has(category)) {
-        await loadCategory(category);
-    } else if (category === 'all' && loadedCategories.size === 0) {
-        // 如果是全部分类且没有加载过任何分类，加载所有分类
-        await loadAllCategories();
+    // 检查是否需要强制重新加载（检测旧数据）
+    const problems = JSON.parse(localStorage.getItem('problems') || '[]');
+    const hasOldData = problems.length > 0 && !problems[0].type;
+    
+    // 如果指定了分类，加载该分类（如果有旧数据则强制重新加载）
+    if (category !== 'all') {
+        await loadCategory(category, hasOldData);
+    } else if (category === 'all') {
+        // 如果是全部分类，加载所有分类（如果有旧数据则强制重新加载）
+        await loadAllCategories(hasOldData || loadedCategories.size === 0);
     }
     
     // 加载题目列表
@@ -165,9 +186,13 @@ function bindFilterEvents() {
             const category = this.value;
             const difficulty = difficultySelect.value;
             
+            // 检查是否有旧数据需要强制重新加载
+            const problems = JSON.parse(localStorage.getItem('problems') || '[]');
+            const hasOldData = problems.length > 0 && !problems[0].type;
+            
             // 加载对应的分类
             if (category !== 'all') {
-                await loadCategory(category);
+                await loadCategory(category, hasOldData);
             }
             
             // 更新 URL 参数
@@ -264,10 +289,14 @@ async function initProblemDetail() {
         // 先尝试从数据库获取题目
         let problem = await window.db.problemDB.findById(problemId);
         
+        // 检查是否有旧数据需要强制重新加载
+        const problems = JSON.parse(localStorage.getItem('problems') || '[]');
+        const hasOldData = problems.length > 0 && !problems[0].type;
+        
         // 如果题目不存在，尝试加载所有分类
-        if (!problem) {
-            console.log('题目不存在，尝试加载所有分类...');
-            await loadAllCategories();
+        if (!problem || hasOldData) {
+            console.log('题目不存在或有旧数据，尝试加载所有分类...');
+            await loadAllCategories(hasOldData);
             // 再次尝试获取题目
             problem = await window.db.problemDB.findById(problemId);
         }
