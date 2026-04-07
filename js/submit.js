@@ -45,25 +45,24 @@ function initSubmit() {
         });
         
         // 设置编辑器高度
-        editor.setSize('100%', '300px');
+        editor.setSize('100%', null);
         
-        // 当窗口大小改变时，重新调整编辑器高度
+        // 确保编辑器有最小高度并支持滚动
+        const cmScroller = editor.getScrollerElement();
+        cmScroller.style.minHeight = '300px';
+        cmScroller.style.overflowY = 'auto';
+        
+        // 当窗口大小改变时，刷新编辑器
         window.addEventListener('resize', function() {
             if (editor) {
-                const container = document.querySelector('.editor-wrapper');
-                if (container) {
-                    editor.setSize('100%', container.clientHeight + 'px');
-                }
+                editor.refresh();
             }
         });
         
-        // 延迟设置一次高度，确保容器大小已计算完成
+        // 延迟刷新编辑器
         setTimeout(function() {
             if (editor) {
-                const container = document.querySelector('.editor-wrapper');
-                if (container) {
-                    editor.setSize('100%', container.clientHeight + 'px');
-                }
+                editor.refresh();
             }
         }, 100);
         
