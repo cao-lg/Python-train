@@ -135,7 +135,7 @@ async function judgeWithAssert(code, problem) {
         for (let i = 0; i < testCases.length; i++) {
             const testCase = testCases[i];
             const testInput = testCase.input || '';
-            const expectedOutput = testCase.expected || '';
+            const expectedOutput = testCase.output || testCase.expected || '';
             
             try {
                 const result = await executeCodeWithInput(code, testInput, 5000);
